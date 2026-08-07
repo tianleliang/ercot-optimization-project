@@ -1,0 +1,4116 @@
+{
+  "metadata": {
+    "project_title": "ERCOT Climate-Resilience Investment Optimization",
+    "export_version": "v4",
+    "forecast_horizon": "2025-2050",
+    "forecast_horizon_inclusive_years": 26,
+    "energy_source_count": 7,
+    "source_specific_cluster_count": 18,
+    "geographic_grid_cell_count": 10,
+    "baseline_loss_total_B": 43.099999999999994,
+    "baseline_definition": "Pessimistic cumulative retail-energy-provider loss over 2025-2050 used as the optimization input scenario",
+    "original_modeling_environment": "AMPL",
+    "original_solver": "SNOPT",
+    "monte_carlo_seed": 42,
+    "monte_carlo_trials": 300,
+    "monte_carlo_scenario": "Moderate",
+    "reference_budget_B": 5
+  },
+  "definitions": {
+    "a": "Maximum modeled fraction of cluster loss that resilience investment can avoid",
+    "b": "Investment scale parameter controlling diminishing returns, measured in $M",
+    "ROI": "Modeled avoided cumulative loss divided by investment budget; not accounting ROI or IRR",
+    "marginal_ROI": "Incremental avoided loss divided by the incremental budget between adjacent tested caps",
+    "cluster": "An energy-source-specific group of Texas power plants mapped to the nearest GFDL climate grid centroid"
+  },
+  "known_qualifications": [
+    "$43.1B is cumulative over 2025-2050, not annual loss.",
+    "The $5B Moderate reference budget is selected from a discrete tested grid using thresholds; it is not a unique continuous optimum.",
+    "The Pessimistic $0.1B selection is a fallback after no tested point met all thresholds.",
+    "Source ROI, saturation, horizon, and discount inputs remain project assumptions until their underlying citations are recovered.",
+    "The project log's worked example says $15M avoided per $1M-year, while the implemented natural-gas input is $0.15M; the implementation is exported as canonical.",
+    "Monte Carlo independent normal shocks are a sensitivity mechanism, not an estimated joint probability model."
+  ],
+  "upstream_research_context": {
+    "cumulative_loss_scenarios_B": [
+      {
+        "stakeholder": "Residential customers",
+        "scenario": "Optimistic",
+        "cumulative_loss_B": 17.4
+      },
+      {
+        "stakeholder": "Residential customers",
+        "scenario": "Mean",
+        "cumulative_loss_B": 29.8
+      },
+      {
+        "stakeholder": "Residential customers",
+        "scenario": "Pessimistic",
+        "cumulative_loss_B": 42.3
+      },
+      {
+        "stakeholder": "Retail energy providers",
+        "scenario": "Optimistic",
+        "cumulative_loss_B": 19.7
+      },
+      {
+        "stakeholder": "Retail energy providers",
+        "scenario": "Mean",
+        "cumulative_loss_B": 31.4
+      },
+      {
+        "stakeholder": "Retail energy providers",
+        "scenario": "Pessimistic",
+        "cumulative_loss_B": 43.1
+      }
+    ],
+    "geographic_risk_ranks": [
+      {
+        "lat": 27,
+        "lon": -98.75,
+        "risk_rank": 7
+      },
+      {
+        "lat": 29,
+        "lon": -98.75,
+        "risk_rank": 1
+      },
+      {
+        "lat": 29,
+        "lon": -96.25,
+        "risk_rank": 9
+      },
+      {
+        "lat": 31,
+        "lon": -103.75,
+        "risk_rank": 3
+      },
+      {
+        "lat": 31,
+        "lon": -96.25,
+        "risk_rank": 6
+      },
+      {
+        "lat": 33,
+        "lon": -103.75,
+        "risk_rank": 10
+      },
+      {
+        "lat": 33,
+        "lon": -101.25,
+        "risk_rank": 2
+      },
+      {
+        "lat": 33,
+        "lon": -98.75,
+        "risk_rank": 5
+      },
+      {
+        "lat": 33,
+        "lon": -96.25,
+        "risk_rank": 4
+      },
+      {
+        "lat": 35,
+        "lon": -101.25,
+        "risk_rank": 8
+      }
+    ]
+  },
+  "inputs": {
+    "cluster_losses": [
+      {
+        "cluster": "coal_cluster_0",
+        "source": "coal",
+        "source_label": "Coal",
+        "latitude": 31,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 3263294239.4465947,
+        "baseline_loss_B": 3.2632942394465947,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "coal_cluster_1",
+        "source": "coal",
+        "source_label": "Coal",
+        "latitude": 35,
+        "longitude": -101.25,
+        "baseline_loss_dollars": 432534403.02954215,
+        "baseline_loss_B": 0.43253440302954216,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "hydroelectric_cluster_0",
+        "source": "hydroelectric",
+        "source_label": "Hydroelectric",
+        "latitude": 29,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 491961.9886758573,
+        "baseline_loss_B": 0.0004919619886758573,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "hydroelectric_cluster_1",
+        "source": "hydroelectric",
+        "source_label": "Hydroelectric",
+        "latitude": 31,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 295027.5957285061,
+        "baseline_loss_B": 0.0002950275957285061,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "natural_gas_cluster_0",
+        "source": "natural_gas",
+        "source_label": "Natural Gas",
+        "latitude": 29,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 14457234196.698523,
+        "baseline_loss_B": 14.457234196698522,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "natural_gas_cluster_1",
+        "source": "natural_gas",
+        "source_label": "Natural Gas",
+        "latitude": 33,
+        "longitude": -103.75,
+        "baseline_loss_dollars": 3189075651.432822,
+        "baseline_loss_B": 3.1890756514328222,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "natural_gas_cluster_2",
+        "source": "natural_gas",
+        "source_label": "Natural Gas",
+        "latitude": 33,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 9434505626.983612,
+        "baseline_loss_B": 9.434505626983611,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "natural_gas_cluster_3",
+        "source": "natural_gas",
+        "source_label": "Natural Gas",
+        "latitude": 27,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 3244734208.6338964,
+        "baseline_loss_B": 3.244734208633896,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "nuclear_cluster_0",
+        "source": "nuclear",
+        "source_label": "Nuclear",
+        "latitude": 29,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 38515572.957201555,
+        "baseline_loss_B": 0.03851557295720155,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "nuclear_cluster_1",
+        "source": "nuclear",
+        "source_label": "Nuclear",
+        "latitude": 33,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 34553954.916192785,
+        "baseline_loss_B": 0.034553954916192786,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "petroleum_cluster_0",
+        "source": "petroleum",
+        "source_label": "Petroleum",
+        "latitude": 29,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 484075.05489695235,
+        "baseline_loss_B": 0.00048407505489695237,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "petroleum_cluster_1",
+        "source": "petroleum",
+        "source_label": "Petroleum",
+        "latitude": 33,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 1565688.2595688198,
+        "baseline_loss_B": 0.0015656882595688198,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "solar_cluster_0",
+        "source": "solar",
+        "source_label": "Solar",
+        "latitude": 33,
+        "longitude": -96.25,
+        "baseline_loss_dollars": 1044153638.2338926,
+        "baseline_loss_B": 1.0441536382338925,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "solar_cluster_1",
+        "source": "solar",
+        "source_label": "Solar",
+        "latitude": 31,
+        "longitude": -103.75,
+        "baseline_loss_dollars": 1254479122.3800907,
+        "baseline_loss_B": 1.2544791223800906,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "solar_cluster_2",
+        "source": "solar",
+        "source_label": "Solar",
+        "latitude": 29,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 462428466.4027604,
+        "baseline_loss_B": 0.46242846640276036,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "wind_cluster_0",
+        "source": "wind",
+        "source_label": "Wind",
+        "latitude": 33,
+        "longitude": -101.25,
+        "baseline_loss_dollars": 3804051365.753241,
+        "baseline_loss_B": 3.804051365753241,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "wind_cluster_1",
+        "source": "wind",
+        "source_label": "Wind",
+        "latitude": 27,
+        "longitude": -98.75,
+        "baseline_loss_dollars": 1308449272.2158158,
+        "baseline_loss_B": 1.3084492722158159,
+        "input_type": "forecast-derived scenario input"
+      },
+      {
+        "cluster": "wind_cluster_2",
+        "source": "wind",
+        "source_label": "Wind",
+        "latitude": 35,
+        "longitude": -101.25,
+        "baseline_loss_dollars": 1129153528.0169396,
+        "baseline_loss_B": 1.1291535280169396,
+        "input_type": "forecast-derived scenario input"
+      }
+    ],
+    "source_assumptions": [
+      {
+        "source": "coal",
+        "source_label": "Coal",
+        "max_avoidable_fraction_a": 0.6,
+        "annual_avoided_loss_per_1M_invested_M": 0.09,
+        "approx_irr_pct_from_project_log": 6,
+        "planning_horizon_years": 20,
+        "discount_rate": 0.07,
+        "annuity_factor": 10.594014245516165,
+        "representative_cluster_loss_M": 1847.9143212380684,
+        "derived_diminishing_return_scale_b_M": 1162.8669286968245,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "hydroelectric",
+        "source_label": "Hydroelectric",
+        "max_avoidable_fraction_a": 0.65,
+        "annual_avoided_loss_per_1M_invested_M": 0.085,
+        "approx_irr_pct_from_project_log": 7,
+        "planning_horizon_years": 30,
+        "discount_rate": 0.045,
+        "annuity_factor": 16.28888854428883,
+        "representative_cluster_loss_M": 0.39349479220218164,
+        "derived_diminishing_return_scale_b_M": 0.18473193026896859,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "natural_gas",
+        "source_label": "Natural Gas",
+        "max_avoidable_fraction_a": 0.65,
+        "annual_avoided_loss_per_1M_invested_M": 0.15,
+        "approx_irr_pct_from_project_log": 15,
+        "planning_horizon_years": 15,
+        "discount_rate": 0.055,
+        "annuity_factor": 10.037580943471367,
+        "representative_cluster_loss_M": 6339.619917808754,
+        "derived_diminishing_return_scale_b_M": 2736.883165895933,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "nuclear",
+        "source_label": "Nuclear",
+        "max_avoidable_fraction_a": 0.7,
+        "annual_avoided_loss_per_1M_invested_M": 0.12,
+        "approx_irr_pct_from_project_log": 8,
+        "planning_horizon_years": 25,
+        "discount_rate": 0.05,
+        "annuity_factor": 14.093944566044762,
+        "representative_cluster_loss_M": 36.534763936697175,
+        "derived_diminishing_return_scale_b_M": 15.121349122576314,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "petroleum",
+        "source_label": "Petroleum",
+        "max_avoidable_fraction_a": 0.55,
+        "annual_avoided_loss_per_1M_invested_M": 0.075,
+        "approx_irr_pct_from_project_log": 6,
+        "planning_horizon_years": 15,
+        "discount_rate": 0.07,
+        "annuity_factor": 9.10791400510915,
+        "representative_cluster_loss_M": 1.024881657232886,
+        "derived_diminishing_return_scale_b_M": 0.825194310738089,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "solar",
+        "source_label": "Solar",
+        "max_avoidable_fraction_a": 0.55,
+        "annual_avoided_loss_per_1M_invested_M": 0.08,
+        "approx_irr_pct_from_project_log": 8,
+        "planning_horizon_years": 20,
+        "discount_rate": 0.06,
+        "annuity_factor": 11.469921218565263,
+        "representative_cluster_loss_M": 1044.1536382338925,
+        "derived_diminishing_return_scale_b_M": 625.8592475106777,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      },
+      {
+        "source": "wind",
+        "source_label": "Wind",
+        "max_avoidable_fraction_a": 0.6,
+        "annual_avoided_loss_per_1M_invested_M": 0.1,
+        "approx_irr_pct_from_project_log": 10,
+        "planning_horizon_years": 20,
+        "discount_rate": 0.06,
+        "annuity_factor": 11.469921218565263,
+        "representative_cluster_loss_M": 1308.4492722158157,
+        "derived_diminishing_return_scale_b_M": 684.4594207489171,
+        "evidence_status": "project assumption; underlying external citations not preserved"
+      }
+    ],
+    "scenario_parameters": [
+      {
+        "scenario": "Pessimistic",
+        "source": "coal",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.6,
+        "realized_b_M": 1162.8669286968245
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "hydroelectric",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.65,
+        "realized_b_M": 0.18473193026896859
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "natural_gas",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.65,
+        "realized_b_M": 2736.883165895933
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "nuclear",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.7,
+        "realized_b_M": 15.121349122576314
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "petroleum",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.55,
+        "realized_b_M": 0.825194310738089
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "solar",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.55,
+        "realized_b_M": 625.8592475106777
+      },
+      {
+        "scenario": "Pessimistic",
+        "source": "wind",
+        "a_scale": 1,
+        "b_scale": 1,
+        "realized_a": 0.6,
+        "realized_b_M": 684.4594207489171
+      },
+      {
+        "scenario": "Moderate",
+        "source": "coal",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.69,
+        "realized_b_M": 988.4368893923008
+      },
+      {
+        "scenario": "Moderate",
+        "source": "hydroelectric",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.7474999999999999,
+        "realized_b_M": 0.1570221407286233
+      },
+      {
+        "scenario": "Moderate",
+        "source": "natural_gas",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.7474999999999999,
+        "realized_b_M": 2326.350691011543
+      },
+      {
+        "scenario": "Moderate",
+        "source": "nuclear",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.8049999999999999,
+        "realized_b_M": 12.853146754189867
+      },
+      {
+        "scenario": "Moderate",
+        "source": "petroleum",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.6325,
+        "realized_b_M": 0.7014151641273757
+      },
+      {
+        "scenario": "Moderate",
+        "source": "solar",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.6325,
+        "realized_b_M": 531.9803603840761
+      },
+      {
+        "scenario": "Moderate",
+        "source": "wind",
+        "a_scale": 1.15,
+        "b_scale": 0.85,
+        "realized_a": 0.69,
+        "realized_b_M": 581.7905076365795
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "coal",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.78,
+        "realized_b_M": 814.0068500877771
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "hydroelectric",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.8450000000000001,
+        "realized_b_M": 0.129312351188278
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "natural_gas",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.8450000000000001,
+        "realized_b_M": 1915.818216127153
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "nuclear",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.9099999999999999,
+        "realized_b_M": 10.58494438580342
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "petroleum",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.7150000000000001,
+        "realized_b_M": 0.5776360175166623
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "solar",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.7150000000000001,
+        "realized_b_M": 438.10147325747437
+      },
+      {
+        "scenario": "Optimistic",
+        "source": "wind",
+        "a_scale": 1.3,
+        "b_scale": 0.7,
+        "realized_a": 0.78,
+        "realized_b_M": 479.1215945242419
+      }
+    ]
+  },
+  "experiments": {
+    "budget_frontiers": [
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 100000000,
+        "residual_amount": 42767934373.99688,
+        "avoided_amount": 332065626.0031204,
+        "ROI": 3.320656260031204,
+        "mROI": null
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 250000000,
+        "residual_amount": 42304306948.06032,
+        "avoided_amount": 795693051.939682,
+        "ROI": 3.182772207758728,
+        "mROI": 3.0908495062437438
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 500000000,
+        "residual_amount": 41610415777.18272,
+        "avoided_amount": 1489584222.8172836,
+        "ROI": 2.979168445634567,
+        "mROI": 2.7755646835104066
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 750000000,
+        "residual_amount": 40999698207.66953,
+        "avoided_amount": 2100301792.3304672,
+        "ROI": 2.8004023897739563,
+        "mROI": 2.4428702780527343
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 1000000000,
+        "residual_amount": 40450419976.55555,
+        "avoided_amount": 2649580023.4444504,
+        "ROI": 2.64958002344445,
+        "mROI": 2.1971129244559324
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 1500000000,
+        "residual_amount": 39460472554.58644,
+        "avoided_amount": 3639527445.413559,
+        "ROI": 2.4263516302757058,
+        "mROI": 1.9798948439382171
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 2000000000,
+        "residual_amount": 38591390018.693985,
+        "avoided_amount": 4508609981.306015,
+        "ROI": 2.2543049906530075,
+        "mROI": 1.7381650717849122
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 3000000000,
+        "residual_amount": 37112097318.53956,
+        "avoided_amount": 5987902681.460442,
+        "ROI": 1.995967560486814,
+        "mROI": 1.4792927001544265
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 4000000000,
+        "residual_amount": 35893258711.71013,
+        "avoided_amount": 7206741288.289871,
+        "ROI": 1.8016853220724678,
+        "mROI": 1.2188386068294297
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 5000000000,
+        "residual_amount": 34861723448.736824,
+        "avoided_amount": 8238276551.263176,
+        "ROI": 1.6476553102526352,
+        "mROI": 1.0315352629733048
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 7500000000,
+        "residual_amount": 32808351419.642,
+        "avoided_amount": 10291648580.358002,
+        "ROI": 1.3722198107144001,
+        "mROI": 0.8213488116379303
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 10000000000,
+        "residual_amount": 31193255342.946304,
+        "avoided_amount": 11906744657.053696,
+        "ROI": 1.1906744657053696,
+        "mROI": 0.6460384306782776
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 12500000000,
+        "residual_amount": 29867116919.654243,
+        "avoided_amount": 13232883080.345757,
+        "ROI": 1.0586306464276605,
+        "mROI": 0.5304553693168244
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 15000000000,
+        "residual_amount": 28758757146.317543,
+        "avoided_amount": 14341242853.682457,
+        "ROI": 0.9560828569121638,
+        "mROI": 0.44334390933468015
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 17500000000,
+        "residual_amount": 27817188179.999893,
+        "avoided_amount": 15282811820.000107,
+        "ROI": 0.8733035325714347,
+        "mROI": 0.3766275865270599
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 20000000000,
+        "residual_amount": 27006128606.988773,
+        "avoided_amount": 16093871393.011227,
+        "ROI": 0.8046935696505614,
+        "mROI": 0.32442382920444796
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 25000000000,
+        "residual_amount": 25680207408.266636,
+        "avoided_amount": 17419792591.733364,
+        "ROI": 0.6967917036693345,
+        "mROI": 0.2651842397444275
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 30000000000,
+        "residual_amount": 24640050935.645294,
+        "avoided_amount": 18459949064.354706,
+        "ROI": 0.6153316354784902,
+        "mROI": 0.20803129452426833
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 35000000000,
+        "residual_amount": 23799113881.816494,
+        "avoided_amount": 19300886118.183506,
+        "ROI": 0.5514538890909573,
+        "mROI": 0.16818741076576005
+      },
+      {
+        "scenario": "Pessimistic",
+        "budget_amount": 40000000000,
+        "residual_amount": 23105100080.287514,
+        "avoided_amount": 19994899919.712486,
+        "ROI": 0.49987249799281214,
+        "mROI": 0.13880276030579605
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 100000000,
+        "residual_amount": 42653052605.24614,
+        "avoided_amount": 446947394.7538605,
+        "ROI": 4.469473947538605,
+        "mROI": null
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 250000000,
+        "residual_amount": 42036330784.1063,
+        "avoided_amount": 1063669215.8936996,
+        "ROI": 4.254676863574798,
+        "mROI": 4.111478807598928
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 500000000,
+        "residual_amount": 41129098067.82278,
+        "avoided_amount": 1970901932.1772232,
+        "ROI": 3.9418038643544464,
+        "mROI": 3.628930865134094
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 750000000,
+        "residual_amount": 40344350298.03602,
+        "avoided_amount": 2755649701.9639816,
+        "ROI": 3.6741996026186423,
+        "mROI": 3.1389910791470337
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 1000000000,
+        "residual_amount": 39633457511.0869,
+        "avoided_amount": 3466542488.913101,
+        "ROI": 3.466542488913101,
+        "mROI": 2.8435711477964785
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 1500000000,
+        "residual_amount": 38370004709.38086,
+        "avoided_amount": 4729995290.619141,
+        "ROI": 3.153330193746094,
+        "mROI": 2.5269056034120787
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 2000000000,
+        "residual_amount": 37274643528.54285,
+        "avoided_amount": 5825356471.457153,
+        "ROI": 2.9126782357285768,
+        "mROI": 2.190722361676025
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 3000000000,
+        "residual_amount": 35439876777.154915,
+        "avoided_amount": 7660123222.845085,
+        "ROI": 2.553374407615028,
+        "mROI": 1.8347667513879318
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 4000000000,
+        "residual_amount": 33956616238.236618,
+        "avoided_amount": 9143383761.763382,
+        "ROI": 2.2858459404408453,
+        "mROI": 1.483260538918297
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 5000000000,
+        "residual_amount": 32709838941.686184,
+        "avoided_amount": 10390161058.313816,
+        "ROI": 2.078032211662763,
+        "mROI": 1.246777296550434
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 7500000000,
+        "residual_amount": 30233631384.69692,
+        "avoided_amount": 12866368615.303082,
+        "ROI": 1.7155158153737442,
+        "mROI": 0.9904830227957062
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 10000000000,
+        "residual_amount": 28301642504.140064,
+        "avoided_amount": 14798357495.859936,
+        "ROI": 1.4798357495859935,
+        "mROI": 0.7727955522227417
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 12500000000,
+        "residual_amount": 26746555086.144295,
+        "avoided_amount": 16353444913.855705,
+        "ROI": 1.3082755931084564,
+        "mROI": 0.6220349671983078
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 15000000000,
+        "residual_amount": 25466072146.599182,
+        "avoided_amount": 17633927853.400818,
+        "ROI": 1.1755951902267212,
+        "mROI": 0.512193175818045
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 17500000000,
+        "residual_amount": 24391071446.936325,
+        "avoided_amount": 18708928553.063675,
+        "ROI": 1.0690816316036387,
+        "mROI": 0.43000027986514283
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 20000000000,
+        "residual_amount": 23475744037.67714,
+        "avoided_amount": 19624255962.32286,
+        "ROI": 0.981212798116143,
+        "mROI": 0.3661309637036743
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 25000000000,
+        "residual_amount": 21998461969.525543,
+        "avoided_amount": 21101538030.474457,
+        "ROI": 0.8440615212189783,
+        "mROI": 0.2954564136303192
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 30000000000,
+        "residual_amount": 20852827199.79481,
+        "avoided_amount": 22247172800.20519,
+        "ROI": 0.7415724266735063,
+        "mROI": 0.2291269539461464
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 35000000000,
+        "residual_amount": 19937929874.577137,
+        "avoided_amount": 23162070125.422863,
+        "ROI": 0.6617734321549389,
+        "mROI": 0.18297946504353485
+      },
+      {
+        "scenario": "Moderate",
+        "budget_amount": 40000000000,
+        "residual_amount": 19190439754.97509,
+        "avoided_amount": 23909560245.02491,
+        "ROI": 0.5977390061256227,
+        "mROI": 0.1494980239204094
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 100000000,
+        "residual_amount": 42490933601.673874,
+        "avoided_amount": 609066398.3261261,
+        "ROI": 6.090663983261261,
+        "mROI": null
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 250000000,
+        "residual_amount": 41664386065.25761,
+        "avoided_amount": 1435613934.7423935,
+        "ROI": 5.742455738969574,
+        "mROI": 5.510316909441783
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 500000000,
+        "residual_amount": 40477149894.040565,
+        "avoided_amount": 2622850105.9594345,
+        "ROI": 5.245700211918869,
+        "mROI": 4.748944684868164
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 750000000,
+        "residual_amount": 39460800181.62292,
+        "avoided_amount": 3639199818.377083,
+        "ROI": 4.852266424502777,
+        "mROI": 4.0653988496705935
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 1000000000,
+        "residual_amount": 38542076324.33629,
+        "avoided_amount": 4557923675.663712,
+        "ROI": 4.557923675663711,
+        "mROI": 3.674895429146515
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 1500000000,
+        "residual_amount": 36939275580.53066,
+        "avoided_amount": 6160724419.469337,
+        "ROI": 4.107149612979558,
+        "mROI": 3.205601487611252
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 2000000000,
+        "residual_amount": 35567385119.72192,
+        "avoided_amount": 7532614880.278084,
+        "ROI": 3.766307440139042,
+        "mROI": 2.7437809216174927
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 3000000000,
+        "residual_amount": 33327019736.36911,
+        "avoided_amount": 9772980263.63089,
+        "ROI": 3.2576600878769635,
+        "mROI": 2.240365383352806
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 4000000000,
+        "residual_amount": 31542823335.957893,
+        "avoided_amount": 11557176664.042107,
+        "ROI": 2.8892941660105267,
+        "mROI": 1.7841964004112167
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 5000000000,
+        "residual_amount": 30058740297.831146,
+        "avoided_amount": 13041259702.168854,
+        "ROI": 2.608251940433771,
+        "mROI": 1.4840830381267471
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 7500000000,
+        "residual_amount": 27095044662.85864,
+        "avoided_amount": 16004955337.141361,
+        "ROI": 2.1339940449521815,
+        "mROI": 1.185478253989003
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 10000000000,
+        "residual_amount": 24843335882.980656,
+        "avoided_amount": 18256664117.019344,
+        "ROI": 1.8256664117019343,
+        "mROI": 0.9006835119511932
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 12500000000,
+        "residual_amount": 23072206543.17917,
+        "avoided_amount": 20027793456.82083,
+        "ROI": 1.6022234765456664,
+        "mROI": 0.7084517359205947
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 15000000000,
+        "residual_amount": 21638581575.959595,
+        "avoided_amount": 21461418424.040405,
+        "ROI": 1.4307612282693603,
+        "mROI": 0.5734499868878296
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 17500000000,
+        "residual_amount": 20454269630.741066,
+        "avoided_amount": 22645730369.258934,
+        "ROI": 1.2940417353862248,
+        "mROI": 0.4737247780874115
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 20000000000,
+        "residual_amount": 19458248431.99425,
+        "avoided_amount": 23641751568.00575,
+        "ROI": 1.1820875784002873,
+        "mROI": 0.3984084794987259
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 25000000000,
+        "residual_amount": 17869527846.52943,
+        "avoided_amount": 25230472153.47057,
+        "ROI": 1.0092188861388227,
+        "mROI": 0.3177441170929642
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 30000000000,
+        "residual_amount": 16658484714.480274,
+        "avoided_amount": 26441515285.519726,
+        "ROI": 0.8813838428506575,
+        "mROI": 0.24220862640983123
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 35000000000,
+        "residual_amount": 15704751525.855692,
+        "avoided_amount": 27395248474.14431,
+        "ROI": 0.7827213849755517,
+        "mROI": 0.19074663772491685
+      },
+      {
+        "scenario": "Optimistic",
+        "budget_amount": 40000000000,
+        "residual_amount": 14934197690.948042,
+        "avoided_amount": 28165802309.051956,
+        "ROI": 0.7041450577262989,
+        "mROI": 0.15411076698152923
+      }
+    ],
+    "threshold_selected_budgets": [
+      {
+        "scenario": "Pessimistic",
+        "selected_budget_dollars": 100000000,
+        "selected_budget_B": 0.1,
+        "avoided_loss_dollars": 332065626.0031204,
+        "avoided_loss_B": 0.3320656260031204,
+        "ROI_avoided_loss_over_budget": 3.320656260031204,
+        "marginal_ROI": null,
+        "marginal_ROI_threshold_met": false,
+        "selection_note": "fallback to highest sampled ROI; no tested point met all thresholds"
+      },
+      {
+        "scenario": "Moderate",
+        "selected_budget_dollars": 5000000000,
+        "selected_budget_B": 5,
+        "avoided_loss_dollars": 10390161058.313816,
+        "avoided_loss_B": 10.390161058313817,
+        "ROI_avoided_loss_over_budget": 2.078032211662763,
+        "marginal_ROI": 1.246777296550434,
+        "marginal_ROI_threshold_met": true,
+        "selection_note": "largest tested budget meeting savings, ROI, and marginal-ROI thresholds"
+      },
+      {
+        "scenario": "Optimistic",
+        "selected_budget_dollars": 7500000000,
+        "selected_budget_B": 7.5,
+        "avoided_loss_dollars": 16004955337.141361,
+        "avoided_loss_B": 16.00495533714136,
+        "ROI_avoided_loss_over_budget": 2.1339940449521815,
+        "marginal_ROI": 1.185478253989003,
+        "marginal_ROI_threshold_met": true,
+        "selection_note": "largest tested budget meeting savings, ROI, and marginal-ROI thresholds"
+      }
+    ],
+    "budget_source_allocations": [
+      {
+        "scenario": "Moderate",
+        "source": "natural_gas",
+        "allocation_M": 833.8176309301177,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0.8338176309301177,
+        "share_pct": 83.38176309301176
+      },
+      {
+        "scenario": "Moderate",
+        "source": "wind",
+        "allocation_M": 166.18236906988244,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0.16618236906988243,
+        "share_pct": 16.61823690698824
+      },
+      {
+        "scenario": "Moderate",
+        "source": "coal",
+        "allocation_M": 0,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0,
+        "share_pct": 0
+      },
+      {
+        "scenario": "Moderate",
+        "source": "hydroelectric",
+        "allocation_M": 0,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0,
+        "share_pct": 0
+      },
+      {
+        "scenario": "Moderate",
+        "source": "nuclear",
+        "allocation_M": 0,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0,
+        "share_pct": 0
+      },
+      {
+        "scenario": "Moderate",
+        "source": "petroleum",
+        "allocation_M": 0,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0,
+        "share_pct": 0
+      },
+      {
+        "scenario": "Moderate",
+        "source": "solar",
+        "allocation_M": 0,
+        "cap_bin": "Low ($1B)",
+        "cap_dollars": 1000000000,
+        "allocation_B": 0,
+        "share_pct": 0
+      },
+      {
+        "scenario": "Moderate",
+        "source": "natural_gas",
+        "allocation_M": 3788.29435323448,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 3.78829435323448,
+        "share_pct": 75.76588706468961
+      },
+      {
+        "scenario": "Moderate",
+        "source": "wind",
+        "allocation_M": 707.2355749494385,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.7072355749494385,
+        "share_pct": 14.144711498988771
+      },
+      {
+        "scenario": "Moderate",
+        "source": "coal",
+        "allocation_M": 400.8081063444847,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.4008081063444847,
+        "share_pct": 8.016162126889697
+      },
+      {
+        "scenario": "Moderate",
+        "source": "solar",
+        "allocation_M": 93.0131219664786,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.0930131219664786,
+        "share_pct": 1.8602624393295721
+      },
+      {
+        "scenario": "Moderate",
+        "source": "nuclear",
+        "allocation_M": 10.491134217642461,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.01049113421764246,
+        "share_pct": 0.20982268435284926
+      },
+      {
+        "scenario": "Moderate",
+        "source": "hydroelectric",
+        "allocation_M": 0.08301584460627698,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.00008301584460627698,
+        "share_pct": 0.00166031689212554
+      },
+      {
+        "scenario": "Moderate",
+        "source": "petroleum",
+        "allocation_M": 0.07469344286951148,
+        "cap_bin": "Mid ($5B)",
+        "cap_dollars": 5000000000,
+        "allocation_B": 0.00007469344286951147,
+        "share_pct": 0.0014938688573902298
+      },
+      {
+        "scenario": "Moderate",
+        "source": "natural_gas",
+        "allocation_M": 7310.352862960488,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 7.310352862960488,
+        "share_pct": 73.10352862960488
+      },
+      {
+        "scenario": "Moderate",
+        "source": "wind",
+        "allocation_M": 1426.9870601410494,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 1.4269870601410495,
+        "share_pct": 14.269870601410496
+      },
+      {
+        "scenario": "Moderate",
+        "source": "coal",
+        "allocation_M": 808.5013129357741,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 0.8085013129357741,
+        "share_pct": 8.08501312935774
+      },
+      {
+        "scenario": "Moderate",
+        "source": "solar",
+        "allocation_M": 432.5430053570825,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 0.4325430053570825,
+        "share_pct": 4.325430053570825
+      },
+      {
+        "scenario": "Moderate",
+        "source": "nuclear",
+        "allocation_M": 21.113769395460096,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 0.021113769395460096,
+        "share_pct": 0.21113769395460094
+      },
+      {
+        "scenario": "Moderate",
+        "source": "petroleum",
+        "allocation_M": 0.30245258571201183,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 0.00030245258571201186,
+        "share_pct": 0.003024525857120118
+      },
+      {
+        "scenario": "Moderate",
+        "source": "hydroelectric",
+        "allocation_M": 0.19953662443423953,
+        "cap_bin": "High ($10B)",
+        "cap_dollars": 10000000000,
+        "allocation_B": 0.00019953662443423953,
+        "share_pct": 0.001995366244342395
+      }
+    ],
+    "reference_case": {
+      "scenario": "Moderate",
+      "budget_B": 5,
+      "avoided_loss_B": 10.390161058313817,
+      "residual_loss_B": 32.709838941686186,
+      "ROI_avoided_loss_over_budget": 2.078032211662763,
+      "marginal_ROI": 1.246777296550434,
+      "cluster_allocations": [
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "natural_gas_cluster_0",
+          "source": "natural_gas",
+          "allocation_M": 2342.795062864823,
+          "allocation_B": 2.3427950628648233,
+          "share_pct": 46.85590125729647,
+          "baseline_loss_B": 14.457234196698522,
+          "latitude": 29,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "natural_gas_cluster_2",
+          "source": "natural_gas",
+          "allocation_M": 1445.4992903696564,
+          "allocation_B": 1.4454992903696564,
+          "share_pct": 28.909985807393134,
+          "baseline_loss_B": 9.434505626983611,
+          "latitude": 33,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "wind_cluster_0",
+          "source": "wind",
+          "allocation_M": 568.9641225045762,
+          "allocation_B": 0.5689641225045762,
+          "share_pct": 11.379282450091525,
+          "baseline_loss_B": 3.804051365753241,
+          "latitude": 33,
+          "longitude": -101.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "coal_cluster_0",
+          "source": "coal",
+          "allocation_M": 400.8081063444847,
+          "allocation_B": 0.4008081063444847,
+          "share_pct": 8.016162126889697,
+          "baseline_loss_B": 3.2632942394465947,
+          "latitude": 31,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "wind_cluster_1",
+          "source": "wind",
+          "allocation_M": 93.10779695121091,
+          "allocation_B": 0.09310779695121091,
+          "share_pct": 1.8621559390242186,
+          "baseline_loss_B": 1.3084492722158159,
+          "latitude": 27,
+          "longitude": -98.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "solar_cluster_1",
+          "source": "solar",
+          "allocation_M": 73.02789759668836,
+          "allocation_B": 0.07302789759668836,
+          "share_pct": 1.4605579519337675,
+          "baseline_loss_B": 1.2544791223800906,
+          "latitude": 31,
+          "longitude": -103.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "wind_cluster_2",
+          "source": "wind",
+          "allocation_M": 45.16365549365145,
+          "allocation_B": 0.04516365549365145,
+          "share_pct": 0.9032731098730292,
+          "baseline_loss_B": 1.1291535280169396,
+          "latitude": 35,
+          "longitude": -101.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "solar_cluster_0",
+          "source": "solar",
+          "allocation_M": 19.985224369790227,
+          "allocation_B": 0.01998522436979023,
+          "share_pct": 0.39970448739580466,
+          "baseline_loss_B": 1.0441536382338925,
+          "latitude": 33,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "nuclear_cluster_0",
+          "source": "nuclear",
+          "allocation_M": 5.736558632304401,
+          "allocation_B": 0.005736558632304402,
+          "share_pct": 0.11473117264608804,
+          "baseline_loss_B": 0.03851557295720155,
+          "latitude": 29,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "nuclear_cluster_1",
+          "source": "nuclear",
+          "allocation_M": 4.754575585338059,
+          "allocation_B": 0.004754575585338059,
+          "share_pct": 0.0950915117067612,
+          "baseline_loss_B": 0.034553954916192786,
+          "latitude": 33,
+          "longitude": -98.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "petroleum_cluster_1",
+          "source": "petroleum",
+          "allocation_M": 0.07469344286951148,
+          "allocation_B": 0.00007469344286951147,
+          "share_pct": 0.0014938688573902298,
+          "baseline_loss_B": 0.0015656882595688198,
+          "latitude": 33,
+          "longitude": -98.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "hydroelectric_cluster_0",
+          "source": "hydroelectric",
+          "allocation_M": 0.06674965622031322,
+          "allocation_B": 0.00006674965622031322,
+          "share_pct": 0.0013349931244062646,
+          "baseline_loss_B": 0.0004919619886758573,
+          "latitude": 29,
+          "longitude": -98.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "hydroelectric_cluster_1",
+          "source": "hydroelectric",
+          "allocation_M": 0.01626618838596377,
+          "allocation_B": 0.00001626618838596377,
+          "share_pct": 0.00032532376771927544,
+          "baseline_loss_B": 0.0002950275957285061,
+          "latitude": 31,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "coal_cluster_1",
+          "source": "coal",
+          "allocation_M": 0,
+          "allocation_B": 0,
+          "share_pct": 0,
+          "baseline_loss_B": 0.43253440302954216,
+          "latitude": 35,
+          "longitude": -101.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "natural_gas_cluster_3",
+          "source": "natural_gas",
+          "allocation_M": 0,
+          "allocation_B": 0,
+          "share_pct": 0,
+          "baseline_loss_B": 3.244734208633896,
+          "latitude": 27,
+          "longitude": -98.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "natural_gas_cluster_1",
+          "source": "natural_gas",
+          "allocation_M": 0,
+          "allocation_B": 0,
+          "share_pct": 0,
+          "baseline_loss_B": 3.1890756514328222,
+          "latitude": 33,
+          "longitude": -103.75
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "petroleum_cluster_0",
+          "source": "petroleum",
+          "allocation_M": 0,
+          "allocation_B": 0,
+          "share_pct": 0,
+          "baseline_loss_B": 0.00048407505489695237,
+          "latitude": 29,
+          "longitude": -96.25
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "cluster": "solar_cluster_2",
+          "source": "solar",
+          "allocation_M": 0,
+          "allocation_B": 0,
+          "share_pct": 0,
+          "baseline_loss_B": 0.46242846640276036,
+          "latitude": 29,
+          "longitude": -98.75
+        }
+      ],
+      "geospatial_cells": [
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 29,
+          "lon": -96.25,
+          "baseline_loss_B": 14.49623384471062,
+          "allocation_B": 2.348531621497128,
+          "allocation_share_pct": 46.97063242994256,
+          "clusters": "natural_gas_cluster_0, nuclear_cluster_0, petroleum_cluster_0",
+          "upstream_risk_rank": 9
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 33,
+          "lon": -96.25,
+          "baseline_loss_B": 10.478659265217503,
+          "allocation_B": 1.4654845147394466,
+          "allocation_share_pct": 29.30969029478894,
+          "clusters": "natural_gas_cluster_2, solar_cluster_0",
+          "upstream_risk_rank": 4
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 27,
+          "lon": -98.75,
+          "baseline_loss_B": 4.553183480849712,
+          "allocation_B": 0.09310779695121091,
+          "allocation_share_pct": 1.8621559390242186,
+          "clusters": "natural_gas_cluster_3, wind_cluster_1",
+          "upstream_risk_rank": 7
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 33,
+          "lon": -101.25,
+          "baseline_loss_B": 3.804051365753241,
+          "allocation_B": 0.5689641225045762,
+          "allocation_share_pct": 11.379282450091525,
+          "clusters": "wind_cluster_0",
+          "upstream_risk_rank": 2
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 31,
+          "lon": -96.25,
+          "baseline_loss_B": 3.263589267042323,
+          "allocation_B": 0.4008243725328707,
+          "allocation_share_pct": 8.016487450657415,
+          "clusters": "coal_cluster_0, hydroelectric_cluster_1",
+          "upstream_risk_rank": 6
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 33,
+          "lon": -103.75,
+          "baseline_loss_B": 3.1890756514328222,
+          "allocation_B": 0,
+          "allocation_share_pct": 0,
+          "clusters": "natural_gas_cluster_1",
+          "upstream_risk_rank": 10
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 35,
+          "lon": -101.25,
+          "baseline_loss_B": 1.5616879310464817,
+          "allocation_B": 0.04516365549365145,
+          "allocation_share_pct": 0.9032731098730292,
+          "clusters": "coal_cluster_1, wind_cluster_2",
+          "upstream_risk_rank": 8
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 31,
+          "lon": -103.75,
+          "baseline_loss_B": 1.2544791223800906,
+          "allocation_B": 0.07302789759668836,
+          "allocation_share_pct": 1.4605579519337675,
+          "clusters": "solar_cluster_1",
+          "upstream_risk_rank": 3
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 29,
+          "lon": -98.75,
+          "baseline_loss_B": 0.4629204283914362,
+          "allocation_B": 0.00006674965622031322,
+          "allocation_share_pct": 0.0013349931244062646,
+          "clusters": "hydroelectric_cluster_0, solar_cluster_2",
+          "upstream_risk_rank": 1
+        },
+        {
+          "scenario": "Moderate",
+          "reference_budget_B": 5,
+          "lat": 33,
+          "lon": -98.75,
+          "baseline_loss_B": 0.03611964317576161,
+          "allocation_B": 0.004829269028207571,
+          "allocation_share_pct": 0.09658538056415142,
+          "clusters": "nuclear_cluster_1, petroleum_cluster_1",
+          "upstream_risk_rank": 5
+        }
+      ]
+    },
+    "monte_carlo": {
+      "scenario": "Moderate",
+      "budget_B": 5,
+      "trials": [
+        {
+          "scenario": "Moderate",
+          "trial": 0,
+          "baseline_loss_B": 36.972926880417546,
+          "residual_loss_B": 28.018282707321735,
+          "avoided_loss_B": 8.95464417309581,
+          "ROI": 1.790928834619162
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 1,
+          "baseline_loss_B": 42.67813796208133,
+          "residual_loss_B": 29.861659862498605,
+          "avoided_loss_B": 12.816478099582728,
+          "ROI": 2.5632956199165458
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 2,
+          "baseline_loss_B": 42.79413749223891,
+          "residual_loss_B": 31.241723828327377,
+          "avoided_loss_B": 11.552413663911532,
+          "ROI": 2.3104827327823063
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 3,
+          "baseline_loss_B": 39.68872330031937,
+          "residual_loss_B": 31.313580437585685,
+          "avoided_loss_B": 8.375142862733682,
+          "ROI": 1.6750285725467366
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 4,
+          "baseline_loss_B": 39.776386416455686,
+          "residual_loss_B": 31.713776163495172,
+          "avoided_loss_B": 8.062610252960516,
+          "ROI": 1.6125220505921032
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 5,
+          "baseline_loss_B": 45.01884851941845,
+          "residual_loss_B": 34.13527915746756,
+          "avoided_loss_B": 10.883569361950888,
+          "ROI": 2.1767138723901778
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 6,
+          "baseline_loss_B": 47.952722902711784,
+          "residual_loss_B": 37.466360683157205,
+          "avoided_loss_B": 10.486362219554582,
+          "ROI": 2.0972724439109167
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 7,
+          "baseline_loss_B": 40.85063932605176,
+          "residual_loss_B": 32.657379942804695,
+          "avoided_loss_B": 8.193259383247067,
+          "ROI": 1.6386518766494134
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 8,
+          "baseline_loss_B": 46.7796545161707,
+          "residual_loss_B": 35.53747716420842,
+          "avoided_loss_B": 11.242177351962287,
+          "ROI": 2.2484354703924576
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 9,
+          "baseline_loss_B": 46.017761269369316,
+          "residual_loss_B": 35.91047192182101,
+          "avoided_loss_B": 10.1072893475483,
+          "ROI": 2.02145786950966
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 10,
+          "baseline_loss_B": 43.60169856616089,
+          "residual_loss_B": 32.25833888948093,
+          "avoided_loss_B": 11.34335967667996,
+          "ROI": 2.268671935335992
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 11,
+          "baseline_loss_B": 44.7051816593584,
+          "residual_loss_B": 33.39744199162212,
+          "avoided_loss_B": 11.307739667736286,
+          "ROI": 2.261547933547257
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 12,
+          "baseline_loss_B": 41.20327608534503,
+          "residual_loss_B": 30.543771159947436,
+          "avoided_loss_B": 10.659504925397595,
+          "ROI": 2.131900985079519
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 13,
+          "baseline_loss_B": 39.489137571480356,
+          "residual_loss_B": 29.04967442119616,
+          "avoided_loss_B": 10.4394631502842,
+          "ROI": 2.0878926300568397
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 14,
+          "baseline_loss_B": 42.01373490328209,
+          "residual_loss_B": 32.65815355015441,
+          "avoided_loss_B": 9.355581353127679,
+          "ROI": 1.871116270625536
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 15,
+          "baseline_loss_B": 45.082195680610916,
+          "residual_loss_B": 32.698279378995665,
+          "avoided_loss_B": 12.38391630161525,
+          "ROI": 2.47678326032305
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 16,
+          "baseline_loss_B": 38.998278464633046,
+          "residual_loss_B": 28.228982416564477,
+          "avoided_loss_B": 10.769296048068568,
+          "ROI": 2.1538592096137137
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 17,
+          "baseline_loss_B": 45.527503268518885,
+          "residual_loss_B": 33.62045568801705,
+          "avoided_loss_B": 11.907047580501835,
+          "ROI": 2.381409516100367
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 18,
+          "baseline_loss_B": 43.92434053166098,
+          "residual_loss_B": 32.141537362975946,
+          "avoided_loss_B": 11.78280316868503,
+          "ROI": 2.356560633737006
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 19,
+          "baseline_loss_B": 49.31220692714385,
+          "residual_loss_B": 35.28157342715125,
+          "avoided_loss_B": 14.030633499992597,
+          "ROI": 2.8061266999985195
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 20,
+          "baseline_loss_B": 48.500206564093965,
+          "residual_loss_B": 35.81850548368555,
+          "avoided_loss_B": 12.681701080408413,
+          "ROI": 2.536340216081683
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 21,
+          "baseline_loss_B": 43.76496293669768,
+          "residual_loss_B": 35.57730626451728,
+          "avoided_loss_B": 8.187656672180397,
+          "ROI": 1.6375313344360796
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 22,
+          "baseline_loss_B": 41.05058243637233,
+          "residual_loss_B": 33.85162033102987,
+          "avoided_loss_B": 7.198962105342456,
+          "ROI": 1.4397924210684911
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 23,
+          "baseline_loss_B": 40.17205100310683,
+          "residual_loss_B": 30.96145094344927,
+          "avoided_loss_B": 9.210600059657562,
+          "ROI": 1.8421200119315122
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 24,
+          "baseline_loss_B": 44.976026524165654,
+          "residual_loss_B": 34.01966033429955,
+          "avoided_loss_B": 10.9563661898661,
+          "ROI": 2.19127323797322
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 25,
+          "baseline_loss_B": 46.92923444681436,
+          "residual_loss_B": 35.10958707343807,
+          "avoided_loss_B": 11.81964737337629,
+          "ROI": 2.363929474675258
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 26,
+          "baseline_loss_B": 43.84897884365605,
+          "residual_loss_B": 30.97540079812389,
+          "avoided_loss_B": 12.873578045532158,
+          "ROI": 2.574715609106432
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 27,
+          "baseline_loss_B": 48.298125810381954,
+          "residual_loss_B": 37.9608687914065,
+          "avoided_loss_B": 10.337257018975462,
+          "ROI": 2.0674514037950926
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 28,
+          "baseline_loss_B": 43.646237795041095,
+          "residual_loss_B": 32.92269338323232,
+          "avoided_loss_B": 10.723544411808776,
+          "ROI": 2.1447088823617553
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 29,
+          "baseline_loss_B": 45.92844282493034,
+          "residual_loss_B": 33.28772597671427,
+          "avoided_loss_B": 12.640716848216078,
+          "ROI": 2.5281433696432156
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 30,
+          "baseline_loss_B": 39.094337048199534,
+          "residual_loss_B": 30.31120938491469,
+          "avoided_loss_B": 8.783127663284846,
+          "ROI": 1.756625532656969
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 31,
+          "baseline_loss_B": 47.37884410957623,
+          "residual_loss_B": 34.49810249070459,
+          "avoided_loss_B": 12.880741618871637,
+          "ROI": 2.5761483237743277
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 32,
+          "baseline_loss_B": 47.425212235720096,
+          "residual_loss_B": 33.89525951531045,
+          "avoided_loss_B": 13.529952720409645,
+          "ROI": 2.705990544081929
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 33,
+          "baseline_loss_B": 42.83856434521775,
+          "residual_loss_B": 27.52610300369006,
+          "avoided_loss_B": 15.312461341527687,
+          "ROI": 3.0624922683055376
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 34,
+          "baseline_loss_B": 49.72343026971807,
+          "residual_loss_B": 35.152012556862104,
+          "avoided_loss_B": 14.571417712855975,
+          "ROI": 2.914283542571195
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 35,
+          "baseline_loss_B": 44.904887058847294,
+          "residual_loss_B": 30.969152659630044,
+          "avoided_loss_B": 13.93573439921725,
+          "ROI": 2.78714687984345
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 36,
+          "baseline_loss_B": 47.76644496203939,
+          "residual_loss_B": 38.27207069512298,
+          "avoided_loss_B": 9.494374266916406,
+          "ROI": 1.898874853383281
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 37,
+          "baseline_loss_B": 44.34642248384439,
+          "residual_loss_B": 32.34419990003013,
+          "avoided_loss_B": 12.002222583814262,
+          "ROI": 2.4004445167628523
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 38,
+          "baseline_loss_B": 42.07505700276196,
+          "residual_loss_B": 33.6521025490946,
+          "avoided_loss_B": 8.422954453667364,
+          "ROI": 1.6845908907334728
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 39,
+          "baseline_loss_B": 43.876473151320205,
+          "residual_loss_B": 34.47677138360282,
+          "avoided_loss_B": 9.399701767717387,
+          "ROI": 1.8799403535434773
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 40,
+          "baseline_loss_B": 44.82898565537877,
+          "residual_loss_B": 33.264725300387425,
+          "avoided_loss_B": 11.564260354991347,
+          "ROI": 2.3128520709982694
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 41,
+          "baseline_loss_B": 41.27656283318918,
+          "residual_loss_B": 31.411558689919566,
+          "avoided_loss_B": 9.865004143269612,
+          "ROI": 1.9730008286539225
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 42,
+          "baseline_loss_B": 40.18119844572621,
+          "residual_loss_B": 31.421434901847068,
+          "avoided_loss_B": 8.75976354387914,
+          "ROI": 1.751952708775828
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 43,
+          "baseline_loss_B": 46.23906033505483,
+          "residual_loss_B": 33.44145367364546,
+          "avoided_loss_B": 12.797606661409372,
+          "ROI": 2.5595213322818746
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 44,
+          "baseline_loss_B": 40.1814882826949,
+          "residual_loss_B": 31.268870226164672,
+          "avoided_loss_B": 8.912618056530231,
+          "ROI": 1.7825236113060463
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 45,
+          "baseline_loss_B": 45.393209452220084,
+          "residual_loss_B": 33.34201181284792,
+          "avoided_loss_B": 12.051197639372164,
+          "ROI": 2.410239527874433
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 46,
+          "baseline_loss_B": 38.364613823545064,
+          "residual_loss_B": 30.013576158836713,
+          "avoided_loss_B": 8.35103766470835,
+          "ROI": 1.6702075329416701
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 47,
+          "baseline_loss_B": 43.786283941906035,
+          "residual_loss_B": 34.49162311995355,
+          "avoided_loss_B": 9.294660821952478,
+          "ROI": 1.8589321643904957
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 48,
+          "baseline_loss_B": 40.42833688114594,
+          "residual_loss_B": 31.80200798210448,
+          "avoided_loss_B": 8.626328899041456,
+          "ROI": 1.7252657798082909
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 49,
+          "baseline_loss_B": 41.34413243490684,
+          "residual_loss_B": 30.05624820021676,
+          "avoided_loss_B": 11.287884234690079,
+          "ROI": 2.2575768469380155
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 50,
+          "baseline_loss_B": 43.82944465511338,
+          "residual_loss_B": 32.849564915470374,
+          "avoided_loss_B": 10.979879739643009,
+          "ROI": 2.1959759479286016
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 51,
+          "baseline_loss_B": 46.47811329438293,
+          "residual_loss_B": 37.12808908094337,
+          "avoided_loss_B": 9.350024213439559,
+          "ROI": 1.870004842687912
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 52,
+          "baseline_loss_B": 45.55755371805142,
+          "residual_loss_B": 33.87881327423896,
+          "avoided_loss_B": 11.678740443812465,
+          "ROI": 2.335748088762493
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 53,
+          "baseline_loss_B": 42.794557742330724,
+          "residual_loss_B": 32.25845162929675,
+          "avoided_loss_B": 10.536106113033977,
+          "ROI": 2.1072212226067952
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 54,
+          "baseline_loss_B": 43.51863593677477,
+          "residual_loss_B": 32.99072972133854,
+          "avoided_loss_B": 10.527906215436232,
+          "ROI": 2.1055812430872467
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 55,
+          "baseline_loss_B": 38.88344203867196,
+          "residual_loss_B": 28.987152749893777,
+          "avoided_loss_B": 9.896289288778181,
+          "ROI": 1.9792578577556363
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 56,
+          "baseline_loss_B": 42.33110010330636,
+          "residual_loss_B": 31.83434599468865,
+          "avoided_loss_B": 10.496754108617708,
+          "ROI": 2.0993508217235415
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 57,
+          "baseline_loss_B": 41.21017237798089,
+          "residual_loss_B": 31.393569865829104,
+          "avoided_loss_B": 9.816602512151785,
+          "ROI": 1.963320502430357
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 58,
+          "baseline_loss_B": 41.23773845841951,
+          "residual_loss_B": 32.227646249646426,
+          "avoided_loss_B": 9.010092208773083,
+          "ROI": 1.8020184417546166
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 59,
+          "baseline_loss_B": 44.46743793380762,
+          "residual_loss_B": 33.64392672638177,
+          "avoided_loss_B": 10.82351120742585,
+          "ROI": 2.16470224148517
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 60,
+          "baseline_loss_B": 49.231481477552904,
+          "residual_loss_B": 32.79757152698027,
+          "avoided_loss_B": 16.433909950572634,
+          "ROI": 3.2867819901145268
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 61,
+          "baseline_loss_B": 42.87727696263951,
+          "residual_loss_B": 35.65972957164332,
+          "avoided_loss_B": 7.217547390996202,
+          "ROI": 1.4435094781992404
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 62,
+          "baseline_loss_B": 40.42541573901966,
+          "residual_loss_B": 31.25031151991443,
+          "avoided_loss_B": 9.175104219105233,
+          "ROI": 1.8350208438210467
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 63,
+          "baseline_loss_B": 46.101032239129204,
+          "residual_loss_B": 34.46620249950201,
+          "avoided_loss_B": 11.634829739627195,
+          "ROI": 2.326965947925439
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 64,
+          "baseline_loss_B": 43.22864288506144,
+          "residual_loss_B": 32.962627789279296,
+          "avoided_loss_B": 10.266015095782146,
+          "ROI": 2.053203019156429
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 65,
+          "baseline_loss_B": 44.71639543256229,
+          "residual_loss_B": 32.469982262686585,
+          "avoided_loss_B": 12.246413169875698,
+          "ROI": 2.4492826339751397
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 66,
+          "baseline_loss_B": 42.973977234725766,
+          "residual_loss_B": 32.21108248065924,
+          "avoided_loss_B": 10.762894754066524,
+          "ROI": 2.152578950813305
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 67,
+          "baseline_loss_B": 45.164970005849376,
+          "residual_loss_B": 32.33158752586604,
+          "avoided_loss_B": 12.833382479983339,
+          "ROI": 2.5666764959966675
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 68,
+          "baseline_loss_B": 42.10305300158136,
+          "residual_loss_B": 32.07838211192547,
+          "avoided_loss_B": 10.024670889655889,
+          "ROI": 2.004934177931178
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 69,
+          "baseline_loss_B": 45.13310118719896,
+          "residual_loss_B": 32.71886253288068,
+          "avoided_loss_B": 12.414238654318284,
+          "ROI": 2.4828477308636567
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 70,
+          "baseline_loss_B": 40.38492436947219,
+          "residual_loss_B": 29.996100683735467,
+          "avoided_loss_B": 10.388823685736723,
+          "ROI": 2.0777647371473447
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 71,
+          "baseline_loss_B": 45.51741037071307,
+          "residual_loss_B": 32.58832927215572,
+          "avoided_loss_B": 12.929081098557356,
+          "ROI": 2.585816219711471
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 72,
+          "baseline_loss_B": 43.283663012774056,
+          "residual_loss_B": 33.10426633544799,
+          "avoided_loss_B": 10.17939667732607,
+          "ROI": 2.035879335465214
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 73,
+          "baseline_loss_B": 46.206943178453145,
+          "residual_loss_B": 33.95658047149582,
+          "avoided_loss_B": 12.250362706957327,
+          "ROI": 2.4500725413914655
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 74,
+          "baseline_loss_B": 43.49311304153629,
+          "residual_loss_B": 33.222574266672666,
+          "avoided_loss_B": 10.270538774863628,
+          "ROI": 2.0541077549727254
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 75,
+          "baseline_loss_B": 47.256123385466985,
+          "residual_loss_B": 35.46717762836533,
+          "avoided_loss_B": 11.788945757101654,
+          "ROI": 2.357789151420331
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 76,
+          "baseline_loss_B": 41.3467579810333,
+          "residual_loss_B": 32.111037587149205,
+          "avoided_loss_B": 9.23572039388409,
+          "ROI": 1.847144078776818
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 77,
+          "baseline_loss_B": 41.445949886268075,
+          "residual_loss_B": 31.488463373021037,
+          "avoided_loss_B": 9.95748651324704,
+          "ROI": 1.991497302649408
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 78,
+          "baseline_loss_B": 44.4767203701271,
+          "residual_loss_B": 33.89741728756911,
+          "avoided_loss_B": 10.579303082557985,
+          "ROI": 2.115860616511597
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 79,
+          "baseline_loss_B": 46.2558222349531,
+          "residual_loss_B": 32.84318963282185,
+          "avoided_loss_B": 13.412632602131248,
+          "ROI": 2.68252652042625
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 80,
+          "baseline_loss_B": 51.216455230058095,
+          "residual_loss_B": 38.55243282438807,
+          "avoided_loss_B": 12.664022405670025,
+          "ROI": 2.5328044811340047
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 81,
+          "baseline_loss_B": 42.97385847790234,
+          "residual_loss_B": 33.2531871180339,
+          "avoided_loss_B": 9.720671359868437,
+          "ROI": 1.9441342719736874
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 82,
+          "baseline_loss_B": 42.369302754612406,
+          "residual_loss_B": 32.15046238062393,
+          "avoided_loss_B": 10.218840373988481,
+          "ROI": 2.0437680747976965
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 83,
+          "baseline_loss_B": 40.25565454881164,
+          "residual_loss_B": 30.830986269231055,
+          "avoided_loss_B": 9.424668279580583,
+          "ROI": 1.8849336559161165
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 84,
+          "baseline_loss_B": 49.2708468273579,
+          "residual_loss_B": 36.90432302632744,
+          "avoided_loss_B": 12.36652380103046,
+          "ROI": 2.473304760206092
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 85,
+          "baseline_loss_B": 48.111491609030935,
+          "residual_loss_B": 33.384448712142515,
+          "avoided_loss_B": 14.727042896888422,
+          "ROI": 2.9454085793776845
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 86,
+          "baseline_loss_B": 41.31487710849433,
+          "residual_loss_B": 30.51222151570641,
+          "avoided_loss_B": 10.802655592787916,
+          "ROI": 2.160531118557583
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 87,
+          "baseline_loss_B": 42.99495268551125,
+          "residual_loss_B": 32.84695458305116,
+          "avoided_loss_B": 10.147998102460093,
+          "ROI": 2.0295996204920184
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 88,
+          "baseline_loss_B": 42.06553975637222,
+          "residual_loss_B": 32.636239817553154,
+          "avoided_loss_B": 9.429299938819058,
+          "ROI": 1.8858599877638116
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 89,
+          "baseline_loss_B": 41.29344406907216,
+          "residual_loss_B": 32.69057418519479,
+          "avoided_loss_B": 8.602869883877371,
+          "ROI": 1.7205739767754742
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 90,
+          "baseline_loss_B": 43.56542139810575,
+          "residual_loss_B": 34.92155270189638,
+          "avoided_loss_B": 8.643868696209363,
+          "ROI": 1.7287737392418727
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 91,
+          "baseline_loss_B": 46.07772963979433,
+          "residual_loss_B": 35.74239880015731,
+          "avoided_loss_B": 10.33533083963702,
+          "ROI": 2.067066167927404
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 92,
+          "baseline_loss_B": 42.82960556303383,
+          "residual_loss_B": 30.007259813936074,
+          "avoided_loss_B": 12.822345749097757,
+          "ROI": 2.5644691498195513
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 93,
+          "baseline_loss_B": 45.511879993437624,
+          "residual_loss_B": 35.15224197850959,
+          "avoided_loss_B": 10.35963801492803,
+          "ROI": 2.071927602985606
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 94,
+          "baseline_loss_B": 39.777207784514275,
+          "residual_loss_B": 29.669552265321908,
+          "avoided_loss_B": 10.107655519192368,
+          "ROI": 2.021531103838474
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 95,
+          "baseline_loss_B": 45.25827522360678,
+          "residual_loss_B": 30.206247184146946,
+          "avoided_loss_B": 15.052028039459838,
+          "ROI": 3.0104056078919674
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 96,
+          "baseline_loss_B": 40.23462234446631,
+          "residual_loss_B": 30.914070823790837,
+          "avoided_loss_B": 9.320551520675476,
+          "ROI": 1.864110304135095
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 97,
+          "baseline_loss_B": 45.53259660026873,
+          "residual_loss_B": 31.43230164795684,
+          "avoided_loss_B": 14.100294952311895,
+          "ROI": 2.820058990462379
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 98,
+          "baseline_loss_B": 39.405721529721816,
+          "residual_loss_B": 26.04240112594489,
+          "avoided_loss_B": 13.363320403776921,
+          "ROI": 2.6726640807553843
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 99,
+          "baseline_loss_B": 40.104596018529676,
+          "residual_loss_B": 32.09831746992618,
+          "avoided_loss_B": 8.006278548603502,
+          "ROI": 1.6012557097207005
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 100,
+          "baseline_loss_B": 42.729451292866536,
+          "residual_loss_B": 32.545596952856485,
+          "avoided_loss_B": 10.183854340010054,
+          "ROI": 2.036770868002011
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 101,
+          "baseline_loss_B": 44.38668480709738,
+          "residual_loss_B": 31.309941614044337,
+          "avoided_loss_B": 13.07674319305304,
+          "ROI": 2.615348638610608
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 102,
+          "baseline_loss_B": 41.77122662421841,
+          "residual_loss_B": 32.24133182820527,
+          "avoided_loss_B": 9.529894796013137,
+          "ROI": 1.9059789592026275
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 103,
+          "baseline_loss_B": 42.26776148064247,
+          "residual_loss_B": 30.30744555766336,
+          "avoided_loss_B": 11.96031592297911,
+          "ROI": 2.392063184595822
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 104,
+          "baseline_loss_B": 40.942945239310674,
+          "residual_loss_B": 31.0928284103354,
+          "avoided_loss_B": 9.850116828975276,
+          "ROI": 1.970023365795055
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 105,
+          "baseline_loss_B": 38.979692735581715,
+          "residual_loss_B": 31.139565902609142,
+          "avoided_loss_B": 7.840126832972575,
+          "ROI": 1.568025366594515
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 106,
+          "baseline_loss_B": 44.506959890340326,
+          "residual_loss_B": 33.84222853106496,
+          "avoided_loss_B": 10.664731359275363,
+          "ROI": 2.1329462718550727
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 107,
+          "baseline_loss_B": 40.04938206040419,
+          "residual_loss_B": 30.79448378033714,
+          "avoided_loss_B": 9.254898280067053,
+          "ROI": 1.8509796560134106
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 108,
+          "baseline_loss_B": 40.495814028983055,
+          "residual_loss_B": 30.644475556628056,
+          "avoided_loss_B": 9.851338472355001,
+          "ROI": 1.970267694471
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 109,
+          "baseline_loss_B": 41.763923236597876,
+          "residual_loss_B": 30.17187612721654,
+          "avoided_loss_B": 11.592047109381335,
+          "ROI": 2.318409421876267
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 110,
+          "baseline_loss_B": 50.01753573874983,
+          "residual_loss_B": 35.960590392991016,
+          "avoided_loss_B": 14.056945345758818,
+          "ROI": 2.8113890691517636
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 111,
+          "baseline_loss_B": 44.69288124686779,
+          "residual_loss_B": 33.613125667727964,
+          "avoided_loss_B": 11.079755579139826,
+          "ROI": 2.2159511158279654
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 112,
+          "baseline_loss_B": 43.01721777640429,
+          "residual_loss_B": 31.127585170622954,
+          "avoided_loss_B": 11.889632605781332,
+          "ROI": 2.377926521156266
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 113,
+          "baseline_loss_B": 44.309585077458664,
+          "residual_loss_B": 35.04085168204256,
+          "avoided_loss_B": 9.268733395416108,
+          "ROI": 1.8537466790832215
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 114,
+          "baseline_loss_B": 45.99701231547678,
+          "residual_loss_B": 33.12169247437488,
+          "avoided_loss_B": 12.875319841101897,
+          "ROI": 2.5750639682203795
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 115,
+          "baseline_loss_B": 45.55153741133637,
+          "residual_loss_B": 32.92889451470959,
+          "avoided_loss_B": 12.622642896626784,
+          "ROI": 2.524528579325357
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 116,
+          "baseline_loss_B": 41.78056532028152,
+          "residual_loss_B": 30.842413867340635,
+          "avoided_loss_B": 10.93815145294088,
+          "ROI": 2.187630290588176
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 117,
+          "baseline_loss_B": 43.90073918396669,
+          "residual_loss_B": 30.287559517018813,
+          "avoided_loss_B": 13.613179666947875,
+          "ROI": 2.722635933389575
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 118,
+          "baseline_loss_B": 43.89063443779228,
+          "residual_loss_B": 32.868141694054636,
+          "avoided_loss_B": 11.022492743737647,
+          "ROI": 2.2044985487475293
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 119,
+          "baseline_loss_B": 42.12819009206253,
+          "residual_loss_B": 33.02632542873554,
+          "avoided_loss_B": 9.101864663326996,
+          "ROI": 1.8203729326653992
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 120,
+          "baseline_loss_B": 39.69022828470007,
+          "residual_loss_B": 29.4400180166073,
+          "avoided_loss_B": 10.250210268092767,
+          "ROI": 2.0500420536185535
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 121,
+          "baseline_loss_B": 38.52192790688255,
+          "residual_loss_B": 29.37043547855205,
+          "avoided_loss_B": 9.151492428330505,
+          "ROI": 1.8302984856661009
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 122,
+          "baseline_loss_B": 47.461128558549014,
+          "residual_loss_B": 34.06706511604937,
+          "avoided_loss_B": 13.39406344249964,
+          "ROI": 2.678812688499928
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 123,
+          "baseline_loss_B": 47.03061983288232,
+          "residual_loss_B": 35.79020808846665,
+          "avoided_loss_B": 11.240411744415672,
+          "ROI": 2.2480823488831345
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 124,
+          "baseline_loss_B": 48.49156030799438,
+          "residual_loss_B": 34.97845550077754,
+          "avoided_loss_B": 13.513104807216841,
+          "ROI": 2.7026209614433685
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 125,
+          "baseline_loss_B": 41.333717789418564,
+          "residual_loss_B": 33.026771223407444,
+          "avoided_loss_B": 8.306946566011124,
+          "ROI": 1.6613893132022248
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 126,
+          "baseline_loss_B": 45.97501020695777,
+          "residual_loss_B": 33.92676260999874,
+          "avoided_loss_B": 12.04824759695903,
+          "ROI": 2.409649519391806
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 127,
+          "baseline_loss_B": 43.25662591518339,
+          "residual_loss_B": 33.84631734902002,
+          "avoided_loss_B": 9.410308566163375,
+          "ROI": 1.882061713232675
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 128,
+          "baseline_loss_B": 46.69974834207243,
+          "residual_loss_B": 35.29432540156356,
+          "avoided_loss_B": 11.40542294050887,
+          "ROI": 2.281084588101774
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 129,
+          "baseline_loss_B": 40.93837978640583,
+          "residual_loss_B": 31.115313073353857,
+          "avoided_loss_B": 9.823066713051972,
+          "ROI": 1.9646133426103944
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 130,
+          "baseline_loss_B": 44.24434513256041,
+          "residual_loss_B": 34.51659550783474,
+          "avoided_loss_B": 9.727749624725671,
+          "ROI": 1.9455499249451342
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 131,
+          "baseline_loss_B": 39.89475856927167,
+          "residual_loss_B": 26.466021936848332,
+          "avoided_loss_B": 13.428736632423345,
+          "ROI": 2.6857473264846687
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 132,
+          "baseline_loss_B": 43.32523754315657,
+          "residual_loss_B": 32.07529284440745,
+          "avoided_loss_B": 11.249944698749117,
+          "ROI": 2.2499889397498234
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 133,
+          "baseline_loss_B": 38.42410737066535,
+          "residual_loss_B": 28.238751075099124,
+          "avoided_loss_B": 10.185356295566224,
+          "ROI": 2.0370712591132447
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 134,
+          "baseline_loss_B": 38.26763192146634,
+          "residual_loss_B": 29.87804360305009,
+          "avoided_loss_B": 8.389588318416244,
+          "ROI": 1.677917663683249
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 135,
+          "baseline_loss_B": 40.73921275326598,
+          "residual_loss_B": 32.047377096529324,
+          "avoided_loss_B": 8.691835656736654,
+          "ROI": 1.7383671313473308
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 136,
+          "baseline_loss_B": 40.29010004574808,
+          "residual_loss_B": 30.495994905019938,
+          "avoided_loss_B": 9.794105140728146,
+          "ROI": 1.9588210281456289
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 137,
+          "baseline_loss_B": 47.06486461544775,
+          "residual_loss_B": 35.96301632814215,
+          "avoided_loss_B": 11.101848287305598,
+          "ROI": 2.2203696574611196
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 138,
+          "baseline_loss_B": 38.26376273073802,
+          "residual_loss_B": 26.845301047291827,
+          "avoided_loss_B": 11.4184616834462,
+          "ROI": 2.28369233668924
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 139,
+          "baseline_loss_B": 45.19108592498187,
+          "residual_loss_B": 33.58165692673791,
+          "avoided_loss_B": 11.609428998243958,
+          "ROI": 2.3218857996487916
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 140,
+          "baseline_loss_B": 42.954542767700296,
+          "residual_loss_B": 30.736587169994497,
+          "avoided_loss_B": 12.217955597705798,
+          "ROI": 2.4435911195411593
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 141,
+          "baseline_loss_B": 40.05837183052095,
+          "residual_loss_B": 31.29982336358442,
+          "avoided_loss_B": 8.758548466936528,
+          "ROI": 1.7517096933873058
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 142,
+          "baseline_loss_B": 40.88103301304652,
+          "residual_loss_B": 31.22054817044182,
+          "avoided_loss_B": 9.660484842604696,
+          "ROI": 1.932096968520939
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 143,
+          "baseline_loss_B": 42.769478250100605,
+          "residual_loss_B": 31.440129133927872,
+          "avoided_loss_B": 11.329349116172732,
+          "ROI": 2.2658698232345467
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 144,
+          "baseline_loss_B": 42.23145828910023,
+          "residual_loss_B": 30.871802609782772,
+          "avoided_loss_B": 11.359655679317457,
+          "ROI": 2.2719311358634915
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 145,
+          "baseline_loss_B": 44.78139940694015,
+          "residual_loss_B": 34.739276755138945,
+          "avoided_loss_B": 10.042122651801204,
+          "ROI": 2.008424530360241
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 146,
+          "baseline_loss_B": 39.24030103393833,
+          "residual_loss_B": 30.244366047525812,
+          "avoided_loss_B": 8.995934986412522,
+          "ROI": 1.7991869972825043
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 147,
+          "baseline_loss_B": 44.58329960577039,
+          "residual_loss_B": 32.237781704672265,
+          "avoided_loss_B": 12.34551790109813,
+          "ROI": 2.469103580219626
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 148,
+          "baseline_loss_B": 45.17770943248194,
+          "residual_loss_B": 34.037472890169276,
+          "avoided_loss_B": 11.14023654231266,
+          "ROI": 2.228047308462532
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 149,
+          "baseline_loss_B": 42.47324155934277,
+          "residual_loss_B": 31.27525553704185,
+          "avoided_loss_B": 11.197986022300913,
+          "ROI": 2.2395972044601824
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 150,
+          "baseline_loss_B": 45.33103211562846,
+          "residual_loss_B": 32.01054690455665,
+          "avoided_loss_B": 13.320485211071812,
+          "ROI": 2.6640970422143626
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 151,
+          "baseline_loss_B": 36.984309883695495,
+          "residual_loss_B": 28.48312492463548,
+          "avoided_loss_B": 8.501184959060017,
+          "ROI": 1.7002369918120035
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 152,
+          "baseline_loss_B": 43.46296665181469,
+          "residual_loss_B": 32.73287679829703,
+          "avoided_loss_B": 10.730089853517663,
+          "ROI": 2.1460179707035327
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 153,
+          "baseline_loss_B": 43.52954530755823,
+          "residual_loss_B": 32.52664623365813,
+          "avoided_loss_B": 11.002899073900105,
+          "ROI": 2.200579814780021
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 154,
+          "baseline_loss_B": 45.51879408075128,
+          "residual_loss_B": 34.00415540989206,
+          "avoided_loss_B": 11.514638670859219,
+          "ROI": 2.3029277341718437
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 155,
+          "baseline_loss_B": 41.51578765176127,
+          "residual_loss_B": 31.413757924025603,
+          "avoided_loss_B": 10.102029727735673,
+          "ROI": 2.0204059455471346
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 156,
+          "baseline_loss_B": 45.80760856631284,
+          "residual_loss_B": 35.68045598667728,
+          "avoided_loss_B": 10.127152579635556,
+          "ROI": 2.0254305159271113
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 157,
+          "baseline_loss_B": 47.098338194209354,
+          "residual_loss_B": 33.00308491148895,
+          "avoided_loss_B": 14.095253282720405,
+          "ROI": 2.819050656544081
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 158,
+          "baseline_loss_B": 41.18134881995444,
+          "residual_loss_B": 32.256811428483154,
+          "avoided_loss_B": 8.92453739147128,
+          "ROI": 1.784907478294256
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 159,
+          "baseline_loss_B": 43.39389622863506,
+          "residual_loss_B": 34.99932296086783,
+          "avoided_loss_B": 8.394573267767228,
+          "ROI": 1.6789146535534456
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 160,
+          "baseline_loss_B": 40.41789278409753,
+          "residual_loss_B": 30.081868490391823,
+          "avoided_loss_B": 10.336024293705709,
+          "ROI": 2.0672048587411416
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 161,
+          "baseline_loss_B": 39.39894607088835,
+          "residual_loss_B": 31.390150921461085,
+          "avoided_loss_B": 8.008795149427264,
+          "ROI": 1.6017590298854527
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 162,
+          "baseline_loss_B": 42.05799334978061,
+          "residual_loss_B": 33.23066051426843,
+          "avoided_loss_B": 8.827332835512184,
+          "ROI": 1.765466567102437
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 163,
+          "baseline_loss_B": 46.646421622283796,
+          "residual_loss_B": 33.19793569042587,
+          "avoided_loss_B": 13.448485931857919,
+          "ROI": 2.6896971863715837
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 164,
+          "baseline_loss_B": 46.00043718662295,
+          "residual_loss_B": 32.99006593283593,
+          "avoided_loss_B": 13.010371253787023,
+          "ROI": 2.6020742507574046
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 165,
+          "baseline_loss_B": 46.77699865254386,
+          "residual_loss_B": 34.17150665949876,
+          "avoided_loss_B": 12.6054919930451,
+          "ROI": 2.52109839860902
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 166,
+          "baseline_loss_B": 41.98092421741348,
+          "residual_loss_B": 32.84967015513237,
+          "avoided_loss_B": 9.131254062281107,
+          "ROI": 1.8262508124562213
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 167,
+          "baseline_loss_B": 38.14923061850669,
+          "residual_loss_B": 30.906545649802776,
+          "avoided_loss_B": 7.242684968703914,
+          "ROI": 1.4485369937407828
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 168,
+          "baseline_loss_B": 41.5483230033663,
+          "residual_loss_B": 30.664093892848438,
+          "avoided_loss_B": 10.88422911051786,
+          "ROI": 2.176845822103572
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 169,
+          "baseline_loss_B": 44.664897662784966,
+          "residual_loss_B": 34.62725211496648,
+          "avoided_loss_B": 10.037645547818487,
+          "ROI": 2.0075291095636976
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 170,
+          "baseline_loss_B": 44.67240345926163,
+          "residual_loss_B": 32.49143560919323,
+          "avoided_loss_B": 12.180967850068395,
+          "ROI": 2.436193570013679
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 171,
+          "baseline_loss_B": 42.938804775898056,
+          "residual_loss_B": 33.031117900494614,
+          "avoided_loss_B": 9.907686875403437,
+          "ROI": 1.9815373750806873
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 172,
+          "baseline_loss_B": 38.426569482079756,
+          "residual_loss_B": 29.199112594660132,
+          "avoided_loss_B": 9.227456887419626,
+          "ROI": 1.8454913774839252
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 173,
+          "baseline_loss_B": 41.38433088178816,
+          "residual_loss_B": 32.09481350517796,
+          "avoided_loss_B": 9.289517376610204,
+          "ROI": 1.8579034753220411
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 174,
+          "baseline_loss_B": 48.31033823790549,
+          "residual_loss_B": 35.73784106188935,
+          "avoided_loss_B": 12.572497176016142,
+          "ROI": 2.5144994352032284
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 175,
+          "baseline_loss_B": 39.703904652458384,
+          "residual_loss_B": 29.59215750548749,
+          "avoided_loss_B": 10.111747146970895,
+          "ROI": 2.022349429394179
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 176,
+          "baseline_loss_B": 45.63343981446922,
+          "residual_loss_B": 31.4554241131283,
+          "avoided_loss_B": 14.178015701340918,
+          "ROI": 2.8356031402681836
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 177,
+          "baseline_loss_B": 40.674661159653624,
+          "residual_loss_B": 32.9563163203512,
+          "avoided_loss_B": 7.718344839302423,
+          "ROI": 1.5436689678604845
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 178,
+          "baseline_loss_B": 44.39499872913034,
+          "residual_loss_B": 33.606615846627356,
+          "avoided_loss_B": 10.788382882502985,
+          "ROI": 2.157676576500597
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 179,
+          "baseline_loss_B": 39.13364835909998,
+          "residual_loss_B": 28.368349005856203,
+          "avoided_loss_B": 10.765299353243776,
+          "ROI": 2.153059870648755
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 180,
+          "baseline_loss_B": 43.46847172008888,
+          "residual_loss_B": 32.000628336470506,
+          "avoided_loss_B": 11.467843383618373,
+          "ROI": 2.2935686767236745
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 181,
+          "baseline_loss_B": 41.796902833399194,
+          "residual_loss_B": 29.08394881159971,
+          "avoided_loss_B": 12.712954021799483,
+          "ROI": 2.5425908043598966
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 182,
+          "baseline_loss_B": 38.769215230120835,
+          "residual_loss_B": 30.520387238868544,
+          "avoided_loss_B": 8.248827991252288,
+          "ROI": 1.6497655982504578
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 183,
+          "baseline_loss_B": 42.51009317413988,
+          "residual_loss_B": 32.37182668300641,
+          "avoided_loss_B": 10.138266491133471,
+          "ROI": 2.0276532982266944
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 184,
+          "baseline_loss_B": 40.99223128726201,
+          "residual_loss_B": 30.40624106696309,
+          "avoided_loss_B": 10.585990220298918,
+          "ROI": 2.1171980440597835
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 185,
+          "baseline_loss_B": 49.30134395974162,
+          "residual_loss_B": 36.81069340047478,
+          "avoided_loss_B": 12.49065055926684,
+          "ROI": 2.498130111853368
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 186,
+          "baseline_loss_B": 45.55059459381261,
+          "residual_loss_B": 34.643042284200405,
+          "avoided_loss_B": 10.907552309612205,
+          "ROI": 2.181510461922441
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 187,
+          "baseline_loss_B": 41.264305959233994,
+          "residual_loss_B": 29.68739600013968,
+          "avoided_loss_B": 11.576909959094312,
+          "ROI": 2.3153819918188625
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 188,
+          "baseline_loss_B": 38.79066010365781,
+          "residual_loss_B": 29.779772908116122,
+          "avoided_loss_B": 9.010887195541683,
+          "ROI": 1.8021774391083367
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 189,
+          "baseline_loss_B": 43.582528336343785,
+          "residual_loss_B": 34.52386279302357,
+          "avoided_loss_B": 9.058665543320219,
+          "ROI": 1.8117331086640436
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 190,
+          "baseline_loss_B": 42.509827400111845,
+          "residual_loss_B": 31.936325126206444,
+          "avoided_loss_B": 10.573502273905405,
+          "ROI": 2.114700454781081
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 191,
+          "baseline_loss_B": 44.82518302521111,
+          "residual_loss_B": 31.465629277850937,
+          "avoided_loss_B": 13.359553747360172,
+          "ROI": 2.6719107494720347
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 192,
+          "baseline_loss_B": 42.11571975713114,
+          "residual_loss_B": 33.09888032130554,
+          "avoided_loss_B": 9.016839435825597,
+          "ROI": 1.8033678871651195
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 193,
+          "baseline_loss_B": 42.75804091367777,
+          "residual_loss_B": 30.970176218623195,
+          "avoided_loss_B": 11.787864695054573,
+          "ROI": 2.3575729390109146
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 194,
+          "baseline_loss_B": 43.13438707949555,
+          "residual_loss_B": 31.709579098023845,
+          "avoided_loss_B": 11.424807981471705,
+          "ROI": 2.284961596294341
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 195,
+          "baseline_loss_B": 42.59166825160999,
+          "residual_loss_B": 32.5182922199173,
+          "avoided_loss_B": 10.073376031692689,
+          "ROI": 2.014675206338538
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 196,
+          "baseline_loss_B": 43.16338422175714,
+          "residual_loss_B": 31.873658981012724,
+          "avoided_loss_B": 11.28972524074442,
+          "ROI": 2.2579450481488843
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 197,
+          "baseline_loss_B": 46.27569616527932,
+          "residual_loss_B": 34.39157403879823,
+          "avoided_loss_B": 11.884122126481088,
+          "ROI": 2.376824425296218
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 198,
+          "baseline_loss_B": 45.443669619014514,
+          "residual_loss_B": 34.403113535029405,
+          "avoided_loss_B": 11.04055608398511,
+          "ROI": 2.208111216797022
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 199,
+          "baseline_loss_B": 43.028084151162986,
+          "residual_loss_B": 32.3391058196449,
+          "avoided_loss_B": 10.688978331518086,
+          "ROI": 2.1377956663036173
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 200,
+          "baseline_loss_B": 42.21907057781569,
+          "residual_loss_B": 32.809111318595896,
+          "avoided_loss_B": 9.409959259219795,
+          "ROI": 1.8819918518439591
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 201,
+          "baseline_loss_B": 37.66274704652054,
+          "residual_loss_B": 29.17655809664011,
+          "avoided_loss_B": 8.48618894988043,
+          "ROI": 1.697237789976086
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 202,
+          "baseline_loss_B": 43.62073703877046,
+          "residual_loss_B": 31.82278646980782,
+          "avoided_loss_B": 11.797950568962639,
+          "ROI": 2.3595901137925277
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 203,
+          "baseline_loss_B": 45.761194002212555,
+          "residual_loss_B": 31.959186581459242,
+          "avoided_loss_B": 13.802007420753315,
+          "ROI": 2.760401484150663
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 204,
+          "baseline_loss_B": 38.185099317308435,
+          "residual_loss_B": 28.508029777590842,
+          "avoided_loss_B": 9.677069539717595,
+          "ROI": 1.935413907943519
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 205,
+          "baseline_loss_B": 42.75861073981882,
+          "residual_loss_B": 32.578266121465155,
+          "avoided_loss_B": 10.180344618353661,
+          "ROI": 2.036068923670732
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 206,
+          "baseline_loss_B": 42.00375352407896,
+          "residual_loss_B": 31.32393955419197,
+          "avoided_loss_B": 10.67981396988699,
+          "ROI": 2.1359627939773977
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 207,
+          "baseline_loss_B": 41.726840736094836,
+          "residual_loss_B": 32.20861208944696,
+          "avoided_loss_B": 9.518228646647877,
+          "ROI": 1.9036457293295752
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 208,
+          "baseline_loss_B": 44.26479560628172,
+          "residual_loss_B": 32.135354232333256,
+          "avoided_loss_B": 12.129441373948467,
+          "ROI": 2.4258882747896933
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 209,
+          "baseline_loss_B": 36.36645483174979,
+          "residual_loss_B": 28.120329552613583,
+          "avoided_loss_B": 8.246125279136205,
+          "ROI": 1.6492250558272412
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 210,
+          "baseline_loss_B": 46.57487227377279,
+          "residual_loss_B": 36.04974649731538,
+          "avoided_loss_B": 10.525125776457404,
+          "ROI": 2.105025155291481
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 211,
+          "baseline_loss_B": 49.06917363176559,
+          "residual_loss_B": 36.74549571472394,
+          "avoided_loss_B": 12.323677917041648,
+          "ROI": 2.4647355834083298
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 212,
+          "baseline_loss_B": 39.79352762311751,
+          "residual_loss_B": 31.626678849727373,
+          "avoided_loss_B": 8.166848773390141,
+          "ROI": 1.6333697546780284
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 213,
+          "baseline_loss_B": 41.56533115648435,
+          "residual_loss_B": 31.148632965361948,
+          "avoided_loss_B": 10.4166981911224,
+          "ROI": 2.08333963822448
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 214,
+          "baseline_loss_B": 47.266700969497904,
+          "residual_loss_B": 32.99698969182727,
+          "avoided_loss_B": 14.269711277670641,
+          "ROI": 2.8539422555341285
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 215,
+          "baseline_loss_B": 39.43914654034579,
+          "residual_loss_B": 29.31789185178983,
+          "avoided_loss_B": 10.121254688555961,
+          "ROI": 2.024250937711192
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 216,
+          "baseline_loss_B": 41.56915424564702,
+          "residual_loss_B": 33.89967499645321,
+          "avoided_loss_B": 7.669479249193813,
+          "ROI": 1.5338958498387627
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 217,
+          "baseline_loss_B": 51.02407371855715,
+          "residual_loss_B": 39.249174665827915,
+          "avoided_loss_B": 11.774899052729234,
+          "ROI": 2.3549798105458466
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 218,
+          "baseline_loss_B": 45.99687679218787,
+          "residual_loss_B": 37.12513723542298,
+          "avoided_loss_B": 8.871739556764885,
+          "ROI": 1.7743479113529772
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 219,
+          "baseline_loss_B": 43.77367225063191,
+          "residual_loss_B": 32.49622429308726,
+          "avoided_loss_B": 11.277447957544654,
+          "ROI": 2.2554895915089306
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 220,
+          "baseline_loss_B": 43.71237803864066,
+          "residual_loss_B": 31.37834418148619,
+          "avoided_loss_B": 12.334033857154466,
+          "ROI": 2.4668067714308934
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 221,
+          "baseline_loss_B": 43.16136816831624,
+          "residual_loss_B": 33.295396296074934,
+          "avoided_loss_B": 9.865971872241301,
+          "ROI": 1.9731943744482603
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 222,
+          "baseline_loss_B": 39.76361270534101,
+          "residual_loss_B": 31.767053627827504,
+          "avoided_loss_B": 7.996559077513506,
+          "ROI": 1.5993118155027013
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 223,
+          "baseline_loss_B": 43.16099056437496,
+          "residual_loss_B": 34.80988034253489,
+          "avoided_loss_B": 8.351110221840077,
+          "ROI": 1.6702220443680156
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 224,
+          "baseline_loss_B": 43.15753199821613,
+          "residual_loss_B": 33.114682405752795,
+          "avoided_loss_B": 10.04284959246334,
+          "ROI": 2.0085699184926677
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 225,
+          "baseline_loss_B": 41.23199703916505,
+          "residual_loss_B": 32.99279191428625,
+          "avoided_loss_B": 8.239205124878797,
+          "ROI": 1.6478410249757596
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 226,
+          "baseline_loss_B": 40.341106690900446,
+          "residual_loss_B": 30.73148162462855,
+          "avoided_loss_B": 9.609625066271892,
+          "ROI": 1.9219250132543784
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 227,
+          "baseline_loss_B": 43.144794576716805,
+          "residual_loss_B": 31.974493692080728,
+          "avoided_loss_B": 11.17030088463608,
+          "ROI": 2.234060176927216
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 228,
+          "baseline_loss_B": 41.17607609655152,
+          "residual_loss_B": 31.111959184712806,
+          "avoided_loss_B": 10.064116911838715,
+          "ROI": 2.012823382367743
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 229,
+          "baseline_loss_B": 43.62835272710266,
+          "residual_loss_B": 32.14105288113091,
+          "avoided_loss_B": 11.48729984597175,
+          "ROI": 2.29745996919435
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 230,
+          "baseline_loss_B": 46.75867748070305,
+          "residual_loss_B": 35.14897558270313,
+          "avoided_loss_B": 11.60970189799992,
+          "ROI": 2.321940379599984
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 231,
+          "baseline_loss_B": 41.29679123621946,
+          "residual_loss_B": 31.189089593043,
+          "avoided_loss_B": 10.10770164317646,
+          "ROI": 2.021540328635292
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 232,
+          "baseline_loss_B": 44.576834463939925,
+          "residual_loss_B": 32.59254021790725,
+          "avoided_loss_B": 11.984294246032674,
+          "ROI": 2.396858849206535
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 233,
+          "baseline_loss_B": 43.921633402047455,
+          "residual_loss_B": 33.91103619976322,
+          "avoided_loss_B": 10.01059720228424,
+          "ROI": 2.002119440456848
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 234,
+          "baseline_loss_B": 42.19776473445323,
+          "residual_loss_B": 31.78482718819069,
+          "avoided_loss_B": 10.412937546262539,
+          "ROI": 2.082587509252508
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 235,
+          "baseline_loss_B": 39.471851572602276,
+          "residual_loss_B": 28.792742024399065,
+          "avoided_loss_B": 10.679109548203211,
+          "ROI": 2.1358219096406423
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 236,
+          "baseline_loss_B": 42.845689954114334,
+          "residual_loss_B": 30.786423348195168,
+          "avoided_loss_B": 12.059266605919168,
+          "ROI": 2.4118533211838336
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 237,
+          "baseline_loss_B": 44.468762294642474,
+          "residual_loss_B": 32.98802492997191,
+          "avoided_loss_B": 11.480737364670567,
+          "ROI": 2.2961474729341136
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 238,
+          "baseline_loss_B": 47.34279121677013,
+          "residual_loss_B": 36.04395610649903,
+          "avoided_loss_B": 11.298835110271096,
+          "ROI": 2.259767022054219
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 239,
+          "baseline_loss_B": 42.61442628107447,
+          "residual_loss_B": 32.82242814663891,
+          "avoided_loss_B": 9.791998134435556,
+          "ROI": 1.958399626887111
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 240,
+          "baseline_loss_B": 46.143510877230725,
+          "residual_loss_B": 34.360522132575255,
+          "avoided_loss_B": 11.782988744655464,
+          "ROI": 2.356597748931093
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 241,
+          "baseline_loss_B": 41.18379508810436,
+          "residual_loss_B": 31.824805469393027,
+          "avoided_loss_B": 9.35898961871133,
+          "ROI": 1.871797923742266
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 242,
+          "baseline_loss_B": 41.900488279369384,
+          "residual_loss_B": 32.905114134430775,
+          "avoided_loss_B": 8.995374144938607,
+          "ROI": 1.7990748289877214
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 243,
+          "baseline_loss_B": 41.08402531023621,
+          "residual_loss_B": 31.955709619530975,
+          "avoided_loss_B": 9.128315690705229,
+          "ROI": 1.8256631381410457
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 244,
+          "baseline_loss_B": 43.42261654689212,
+          "residual_loss_B": 32.345461425891216,
+          "avoided_loss_B": 11.077155121000906,
+          "ROI": 2.215431024200181
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 245,
+          "baseline_loss_B": 37.24519064928982,
+          "residual_loss_B": 28.479062509342523,
+          "avoided_loss_B": 8.766128139947297,
+          "ROI": 1.7532256279894594
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 246,
+          "baseline_loss_B": 44.7217498924149,
+          "residual_loss_B": 33.81967088903026,
+          "avoided_loss_B": 10.902079003384635,
+          "ROI": 2.180415800676927
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 247,
+          "baseline_loss_B": 43.94942199935994,
+          "residual_loss_B": 33.60161232254218,
+          "avoided_loss_B": 10.347809676817757,
+          "ROI": 2.0695619353635513
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 248,
+          "baseline_loss_B": 41.833456655329634,
+          "residual_loss_B": 33.65453835589292,
+          "avoided_loss_B": 8.178918299436715,
+          "ROI": 1.635783659887343
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 249,
+          "baseline_loss_B": 44.41936888792004,
+          "residual_loss_B": 34.04874191545508,
+          "avoided_loss_B": 10.370626972464954,
+          "ROI": 2.0741253944929907
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 250,
+          "baseline_loss_B": 41.87764648274455,
+          "residual_loss_B": 31.19292027800921,
+          "avoided_loss_B": 10.68472620473534,
+          "ROI": 2.136945240947068
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 251,
+          "baseline_loss_B": 38.338337340019486,
+          "residual_loss_B": 29.23570961772552,
+          "avoided_loss_B": 9.102627722293965,
+          "ROI": 1.8205255444587929
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 252,
+          "baseline_loss_B": 43.454774560570385,
+          "residual_loss_B": 32.959306405598056,
+          "avoided_loss_B": 10.495468154972325,
+          "ROI": 2.099093630994465
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 253,
+          "baseline_loss_B": 36.321998746308466,
+          "residual_loss_B": 28.563974961066716,
+          "avoided_loss_B": 7.758023785241752,
+          "ROI": 1.5516047570483504
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 254,
+          "baseline_loss_B": 41.65303589987926,
+          "residual_loss_B": 32.87438533452253,
+          "avoided_loss_B": 8.77865056535673,
+          "ROI": 1.7557301130713459
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 255,
+          "baseline_loss_B": 45.544582067449035,
+          "residual_loss_B": 37.74538007978207,
+          "avoided_loss_B": 7.799201987666958,
+          "ROI": 1.5598403975333917
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 256,
+          "baseline_loss_B": 41.714481682903944,
+          "residual_loss_B": 32.16327281689654,
+          "avoided_loss_B": 9.551208866007403,
+          "ROI": 1.910241773201481
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 257,
+          "baseline_loss_B": 45.7945184332737,
+          "residual_loss_B": 34.55680334197269,
+          "avoided_loss_B": 11.23771509130102,
+          "ROI": 2.247543018260204
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 258,
+          "baseline_loss_B": 39.80513946865579,
+          "residual_loss_B": 32.148257536804415,
+          "avoided_loss_B": 7.656881931851374,
+          "ROI": 1.531376386370275
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 259,
+          "baseline_loss_B": 42.531758075209034,
+          "residual_loss_B": 33.15917994042471,
+          "avoided_loss_B": 9.37257813478433,
+          "ROI": 1.874515626956866
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 260,
+          "baseline_loss_B": 43.70163092660302,
+          "residual_loss_B": 34.09760750556759,
+          "avoided_loss_B": 9.604023421035432,
+          "ROI": 1.9208046842070865
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 261,
+          "baseline_loss_B": 45.38353731208725,
+          "residual_loss_B": 33.06646696795862,
+          "avoided_loss_B": 12.31707034412863,
+          "ROI": 2.463414068825726
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 262,
+          "baseline_loss_B": 44.9975724625631,
+          "residual_loss_B": 32.98424930482558,
+          "avoided_loss_B": 12.013323157737519,
+          "ROI": 2.4026646315475038
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 263,
+          "baseline_loss_B": 40.9285638697281,
+          "residual_loss_B": 32.0162994875644,
+          "avoided_loss_B": 8.9122643821637,
+          "ROI": 1.7824528764327399
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 264,
+          "baseline_loss_B": 44.87407542416723,
+          "residual_loss_B": 33.50004254243933,
+          "avoided_loss_B": 11.374032881727901,
+          "ROI": 2.27480657634558
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 265,
+          "baseline_loss_B": 42.26150554578392,
+          "residual_loss_B": 31.740182331441407,
+          "avoided_loss_B": 10.521323214342512,
+          "ROI": 2.1042646428685026
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 266,
+          "baseline_loss_B": 44.14643338733673,
+          "residual_loss_B": 35.33670531559876,
+          "avoided_loss_B": 8.809728071737961,
+          "ROI": 1.7619456143475924
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 267,
+          "baseline_loss_B": 43.11946468537782,
+          "residual_loss_B": 33.32498973830651,
+          "avoided_loss_B": 9.794474947071306,
+          "ROI": 1.9588949894142613
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 268,
+          "baseline_loss_B": 48.950722809495254,
+          "residual_loss_B": 35.2055734978489,
+          "avoided_loss_B": 13.745149311646346,
+          "ROI": 2.749029862329269
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 269,
+          "baseline_loss_B": 44.181922381639794,
+          "residual_loss_B": 33.60327542991769,
+          "avoided_loss_B": 10.578646951722105,
+          "ROI": 2.1157293903444208
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 270,
+          "baseline_loss_B": 44.2602714217972,
+          "residual_loss_B": 30.435280851519487,
+          "avoided_loss_B": 13.824990570277714,
+          "ROI": 2.7649981140555426
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 271,
+          "baseline_loss_B": 44.3403271694018,
+          "residual_loss_B": 34.02947086093335,
+          "avoided_loss_B": 10.31085630846845,
+          "ROI": 2.06217126169369
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 272,
+          "baseline_loss_B": 43.601784870358784,
+          "residual_loss_B": 30.557846410385164,
+          "avoided_loss_B": 13.043938459973626,
+          "ROI": 2.608787691994725
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 273,
+          "baseline_loss_B": 45.53505572434099,
+          "residual_loss_B": 36.277900762255165,
+          "avoided_loss_B": 9.257154962085828,
+          "ROI": 1.8514309924171655
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 274,
+          "baseline_loss_B": 43.05713751317727,
+          "residual_loss_B": 33.53372083419313,
+          "avoided_loss_B": 9.523416678984132,
+          "ROI": 1.9046833357968265
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 275,
+          "baseline_loss_B": 44.14413610774625,
+          "residual_loss_B": 30.538311572090223,
+          "avoided_loss_B": 13.605824535656026,
+          "ROI": 2.721164907131205
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 276,
+          "baseline_loss_B": 41.26835933679874,
+          "residual_loss_B": 30.062729276910527,
+          "avoided_loss_B": 11.205630059888215,
+          "ROI": 2.2411260119776433
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 277,
+          "baseline_loss_B": 41.73405221584459,
+          "residual_loss_B": 29.89039770800621,
+          "avoided_loss_B": 11.843654507838382,
+          "ROI": 2.3687309015676763
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 278,
+          "baseline_loss_B": 40.41983620108303,
+          "residual_loss_B": 31.054665847616267,
+          "avoided_loss_B": 9.365170353466764,
+          "ROI": 1.873034070693353
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 279,
+          "baseline_loss_B": 41.67187612225454,
+          "residual_loss_B": 30.97670224342148,
+          "avoided_loss_B": 10.695173878833055,
+          "ROI": 2.139034775766611
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 280,
+          "baseline_loss_B": 45.86504304738753,
+          "residual_loss_B": 32.101837797826605,
+          "avoided_loss_B": 13.763205249560924,
+          "ROI": 2.7526410499121847
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 281,
+          "baseline_loss_B": 43.572514880026155,
+          "residual_loss_B": 33.056049475044844,
+          "avoided_loss_B": 10.51646540498131,
+          "ROI": 2.103293080996262
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 282,
+          "baseline_loss_B": 44.542540874617295,
+          "residual_loss_B": 32.67808292703958,
+          "avoided_loss_B": 11.864457947577714,
+          "ROI": 2.3728915895155427
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 283,
+          "baseline_loss_B": 44.336996142029975,
+          "residual_loss_B": 33.33174737217363,
+          "avoided_loss_B": 11.005248769856342,
+          "ROI": 2.2010497539712683
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 284,
+          "baseline_loss_B": 44.91089428791279,
+          "residual_loss_B": 36.00152243312727,
+          "avoided_loss_B": 8.909371854785517,
+          "ROI": 1.7818743709571034
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 285,
+          "baseline_loss_B": 39.166064469932884,
+          "residual_loss_B": 29.83422031148201,
+          "avoided_loss_B": 9.331844158450872,
+          "ROI": 1.8663688316901745
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 286,
+          "baseline_loss_B": 39.14786473522241,
+          "residual_loss_B": 30.028122082000923,
+          "avoided_loss_B": 9.119742653221492,
+          "ROI": 1.8239485306442984
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 287,
+          "baseline_loss_B": 38.11113305640738,
+          "residual_loss_B": 30.130458902449067,
+          "avoided_loss_B": 7.980674153958312,
+          "ROI": 1.5961348307916625
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 288,
+          "baseline_loss_B": 42.87085359239404,
+          "residual_loss_B": 32.245289075544484,
+          "avoided_loss_B": 10.625564516849558,
+          "ROI": 2.1251129033699114
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 289,
+          "baseline_loss_B": 42.646011089009676,
+          "residual_loss_B": 31.22990989081338,
+          "avoided_loss_B": 11.416101198196294,
+          "ROI": 2.283220239639259
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 290,
+          "baseline_loss_B": 46.14853573623523,
+          "residual_loss_B": 30.689296283147712,
+          "avoided_loss_B": 15.459239453087518,
+          "ROI": 3.0918478906175033
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 291,
+          "baseline_loss_B": 43.58609547228957,
+          "residual_loss_B": 32.74279985818806,
+          "avoided_loss_B": 10.843295614101512,
+          "ROI": 2.1686591228203027
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 292,
+          "baseline_loss_B": 44.32110553873215,
+          "residual_loss_B": 32.874613791575754,
+          "avoided_loss_B": 11.44649174715639,
+          "ROI": 2.2892983494312777
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 293,
+          "baseline_loss_B": 42.94929885086156,
+          "residual_loss_B": 31.75024991136321,
+          "avoided_loss_B": 11.199048939498352,
+          "ROI": 2.2398097878996706
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 294,
+          "baseline_loss_B": 45.149766796487896,
+          "residual_loss_B": 33.35898094902103,
+          "avoided_loss_B": 11.79078584746686,
+          "ROI": 2.358157169493372
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 295,
+          "baseline_loss_B": 46.112823701606665,
+          "residual_loss_B": 30.939271564423244,
+          "avoided_loss_B": 15.17355213718342,
+          "ROI": 3.034710427436684
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 296,
+          "baseline_loss_B": 43.18195240243079,
+          "residual_loss_B": 34.45336692659245,
+          "avoided_loss_B": 8.728585475838337,
+          "ROI": 1.745717095167667
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 297,
+          "baseline_loss_B": 45.44643095594846,
+          "residual_loss_B": 35.40595711188709,
+          "avoided_loss_B": 10.040473844061372,
+          "ROI": 2.0080947688122746
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 298,
+          "baseline_loss_B": 44.889065904111405,
+          "residual_loss_B": 32.843902100143715,
+          "avoided_loss_B": 12.045163803967691,
+          "ROI": 2.4090327607935382
+        },
+        {
+          "scenario": "Moderate",
+          "trial": 299,
+          "baseline_loss_B": 41.382032959429296,
+          "residual_loss_B": 27.680264041529643,
+          "avoided_loss_B": 13.701768917899647,
+          "ROI": 2.7403537835799296
+        }
+      ],
+      "metric_summary": [
+        {
+          "metric": "avoided_loss_B",
+          "count": 300,
+          "mean": 10.72945332610205,
+          "std": 1.7415429760282028,
+          "min": 7.198962105342456,
+          "5%": 8.178314823134386,
+          "50%": 10.578975017140046,
+          "95%": 13.803156578229535,
+          "max": 16.433909950572634,
+          "share_of_trials_ROI_above_1_pct": null
+        },
+        {
+          "metric": "ROI",
+          "count": 300,
+          "mean": 2.14589066522041,
+          "std": 0.34830859520564056,
+          "min": 1.4397924210684911,
+          "5%": 1.6356629646268772,
+          "50%": 2.115795003428009,
+          "95%": 2.7606313156459072,
+          "max": 3.2867819901145268,
+          "share_of_trials_ROI_above_1_pct": 100
+        }
+      ],
+      "source_share_summary": [
+        {
+          "source": "natural_gas",
+          "mean": 75.86983683119489,
+          "std": 5.495729304047425,
+          "25%": 72.6224071422276,
+          "50%": 76.62658929069104,
+          "75%": 79.16966960112187
+        },
+        {
+          "source": "coal",
+          "mean": 7.548811280183274,
+          "std": 2.8329908364510006,
+          "25%": 5.85707055443212,
+          "50%": 7.683042529839181,
+          "75%": 9.434942747320136
+        },
+        {
+          "source": "wind",
+          "mean": 14.202235171309825,
+          "std": 3.577815277633985,
+          "25%": 11.787424167847686,
+          "50%": 14.184523941315515,
+          "75%": 16.6388534690738
+        },
+        {
+          "source": "solar",
+          "mean": 2.175973847635709,
+          "std": 2.0220079034661254,
+          "25%": 0.4548911155858044,
+          "50%": 1.6587904085472924,
+          "75%": 3.4280114087540148
+        },
+        {
+          "source": "nuclear",
+          "mean": 0.1997993694522275,
+          "std": 0.07466994940946603,
+          "25%": 0.1562117039541258,
+          "50%": 0.19450465161496816,
+          "75%": 0.25079295222806836
+        },
+        {
+          "source": "hydroelectric",
+          "mean": 0.001608417023251709,
+          "std": 0.0007186198407346222,
+          "25%": 0.0011102200228572138,
+          "50%": 0.0015971928293230294,
+          "75%": 0.0020237648851595953
+        },
+        {
+          "source": "petroleum",
+          "mean": 0.0017350832008341081,
+          "std": 0.0015769555743849332,
+          "25%": 0,
+          "50%": 0.0014884451097447722,
+          "75%": 0.0029602676947807637
+        }
+      ],
+      "shock_assumptions": {
+        "a_normal_multiplier_std": 0.1,
+        "b_normal_multiplier_std": 0.2,
+        "cluster_loss_normal_multiplier_std": 0.15,
+        "a_clip": [
+          0.05,
+          0.95
+        ],
+        "b_minimum_M": 0.000001,
+        "cluster_loss_multiplier_minimum": 0.1
+      }
+    }
+  }
+}
