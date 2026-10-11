@@ -1,7 +1,10 @@
-# ERCOT Climate-Resilience Project Page
+# ERCOT Optimization Project 
 
-Combined research report and browser-native allocation simulator. Static Vite + React + TypeScript. No AMPL, SNOPT, backend, or credentials.
+If $43.1B in climate-driven losses is forecast for the Texas grid by 2050, how should a limited resilience budget be allocated across 7 energy sources and 18 plant clusters?
 
+Read more here: https://tianle-liang-ercot-optimization.vercel.app/
+
+Combined research report and browser-native allocation simulator. Static Vite + React + TypeScript. 
 ## Commands
 
 ```bash
