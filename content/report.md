@@ -11,7 +11,7 @@ I built this continuation around that question. The model connects forecast-deri
 In the Moderate reference case, the model allocates a $5.0 billion budget and produces $10.390 billion in modeled avoided cumulative loss over the 2025–2050 forecasting horizon. That comes to 2.078 dollars of modeled avoided loss per dollar allocated. The result is concentrated: natural gas receives 75.77% of the budget, followed by wind at 14.14% and coal at 8.02%.
 
 > [!note] Research status
-> This is an independent research continuation. The results depend on the forecasting inputs and investment-response assumptions described below. They should not be read as a Stanford endorsement, a causal evaluation of resilience projects, or an investment recommendation.
+> This is a continuation of previous independent research. The results depend on the forecasting inputs and investment-response assumptions described below. The project is in the process of being included on the Stanford Systems Optimization Laboratory (SOL) page. The results should not be read as a causal evaluation of resilience projects or an investment recommendation.
 
 ## 1. The decision problem
 
