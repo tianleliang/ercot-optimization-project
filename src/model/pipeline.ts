@@ -221,7 +221,7 @@ export function runDeterministicPipeline(
 
   const budgetWarning =
     visitor.budget_B > visitor.totalLoss_B
-      ? "Budget exceeds total modeled loss. The model will continue allocating against an asymptotic response curve; interpret results with care."
+      ? "Budget exceeds total loss."
       : null;
 
   return {

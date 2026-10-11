@@ -83,7 +83,6 @@ export function FrontierCharts({ rows }: { rows: FrontierRow[] }) {
           }}
         />
       </div>
-      <p className="muted">Budget versus modeled avoided cumulative loss.</p>
       <div className="chart-box">
         <Line
           data={ratio}
@@ -101,7 +100,6 @@ export function FrontierCharts({ rows }: { rows: FrontierRow[] }) {
           }}
         />
       </div>
-      <p className="muted">Budget versus modeled avoided-loss / budget ratio.</p>
     </>
   );
 }
@@ -213,13 +211,13 @@ export function GeoBubblePanels({ cells }: { cells: GeographicCell[] }) {
       <div className="chart-box">
         <Bubble
           data={make("baseline_loss_B", maxLoss, "rgba(31,78,121,0.55)")}
-          options={opts("Cumulative modeled loss by grid cell")}
+          options={opts("Loss by grid cell")}
         />
       </div>
       <div className="chart-box">
         <Bubble
           data={make("allocation_B", maxAlloc, "rgba(31,107,69,0.55)")}
-          options={opts("Optimized allocation by grid cell")}
+          options={opts("Allocation by grid cell")}
         />
       </div>
       <p className="muted">

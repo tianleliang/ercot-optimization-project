@@ -21,20 +21,13 @@ export default function App() {
   return (
     <div className="site-shell">
       <header className="site-header">
-        <h1>From Climate-Risk Forecasts to Resilience Investment Decisions in ERCOT</h1>
+        <h1>ERCOT Climate-Resilience Investment Allocation</h1>
         <p className="site-desc">
-          An interactive optimization continuation of prior ERCOT climate-risk
-          forecasting research. The project allocates limited resilience
-          investment across seven energy sources and 18 source-specific
-          geographic clusters under cumulative 2025–2050 modeled provider-loss
-          assumptions.
+          Where a limited resilience budget should go across 7 energy sources
+          and 18 plant clusters in the Texas grid, 2025–2050.
         </p>
         <p className="site-attrib">
-          Original allocation model formulated in AMPL and solved with SNOPT.
-          This page presents the research report alongside a browser
-          implementation that uses the exact KKT/bisection solution for the same
-          separable model. Independent research continuation — not a Stanford
-          endorsement or investment recommendation.
+          Tianle Liang · mentored by Michael Saunders
         </p>
       </header>
 
@@ -90,6 +83,15 @@ export default function App() {
       >
         <SimulatorView active={tab === "simulator"} />
       </div>
+
+      <footer className="site-footer">
+        <p>
+          The report text was generated with AI, under my direction, from the
+          project&apos;s code and documentation built up over several months. A
+          formal paper is in progress.
+        </p>
+        <p>Independent project. Not affiliated with or endorsed by Stanford.</p>
+      </footer>
     </div>
   );
 }

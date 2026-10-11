@@ -68,13 +68,13 @@ I solved each scenario at 20 discrete budgets between $0.1 billion and $40 billi
 
 ![](/report-assets/01_all_scenarios_budget_vs_avoided_loss.png)
 
-*Figure 1. Modeled avoided cumulative loss across the three response scenarios and 20 tested budget caps.*
+*Figure 1. Avoided loss by budget, three scenarios.*
 
 The second frontier divides avoided loss by the budget. I called this value modeled ROI in the notebook, but avoided-loss-to-budget ratio is more precise. It is not an accounting return, IRR, or expected cash yield.
 
 ![](/report-assets/02_all_scenarios_budget_vs_roi.png)
 
-*Figure 2. Modeled avoided-loss-to-budget ratio declines as later dollars reach lower-return opportunities.*
+*Figure 2. Avoided loss per dollar by budget.*
 
 At $1 billion, modeled avoided loss ranges from $2.650 billion in the Pessimistic case to $4.558 billion in the Optimistic case. At $5 billion, the range is $8.238–$13.041 billion. At $10 billion, it is $11.907–$18.257 billion. More favorable response assumptions increase both the height of the frontier and the budget that can be deployed before marginal modeled benefit falls below one.
 
@@ -98,7 +98,7 @@ At low budgets, the model concentrates capital where the combination of dollar e
 
 ![](/report-assets/03_source_allocation_share_by_budget_cap_moderate_scenario.png)
 
-*Figure 3. Source-level allocation shares at three Moderate-scenario budget caps.*
+*Figure 3. Allocation by source at $1B, $5B, and $10B (Moderate).*
 
 The $5 billion reference case is even more concentrated:
 
@@ -121,7 +121,7 @@ The clearest result appears when I aggregate the 18 source-clusters back to thei
 
 ![](/report-assets/04_ercot_climate_resilience_loss_exposure_and_optimized_allocation.png)
 
-*Figure 4. Cluster losses and the $5 billion Moderate allocation aggregated at the ten climate-grid centroids. Circle size and color encode magnitude, not geographic coverage.*
+*Figure 4. Loss and $5B Moderate allocation by grid cell.*
 
 The upstream paper ranked the cell at (29.0, −98.75) as the most severe physical-risk region based on average efficiency deficits. Yet that cell contains only $0.463 billion in the optimization's dollar-loss baseline and receives roughly $67,000, or 0.0013% of the budget. By contrast, the (29.0, −96.25) cell had an upstream physical-risk rank of nine but receives nearly half the investment budget because it contains the largest natural-gas loss cluster.
 
@@ -135,13 +135,13 @@ Median avoided loss was $10.579 billion, close to the deterministic estimate of 
 
 ![](/report-assets/05_monte_carlo_distribution_of_avoided_loss_moderate_scenario_reference_budget_50b.png)
 
-*Figure 5. Distribution of modeled avoided loss across 300 Moderate-centered sensitivity trials.*
+*Figure 5. Avoided loss across 300 sensitivity trials.*
 
 The source hierarchy was more stable than the exact benefit. Natural gas averaged 75.87% of allocation with a standard deviation of 5.50 percentage points. Wind averaged 14.20%, and coal averaged 7.55%. Solar was less stable relative to its size, averaging 2.18% with a 2.02-point standard deviation.
 
 ![](/report-assets/08_monte_carlo_distribution_of_source_allocation_shares_broken_y_axis_moderate_scen.png)
 
-*Figure 6. Monte Carlo source-allocation distributions, shown on a broken axis so the dominant natural-gas share does not hide the smaller sources.*
+*Figure 6. Allocation share by source across 300 trials.*
 
 The stress test says something useful but limited. The broad allocation pattern survives moderate perturbations, while the amount of avoided loss still moves substantially. The results do not imply a 100% real-world probability of positive return. These shocks are independent normal sensitivity inputs, not an estimated joint distribution of climate, construction, technology, and market uncertainty.
 

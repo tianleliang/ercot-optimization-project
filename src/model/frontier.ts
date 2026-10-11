@@ -98,7 +98,7 @@ export function selectThresholdBudget(
       marginal_ratio: best.marginal_ratio,
       is_fallback: false,
       selection_note:
-        "largest tested budget meeting savings, ROI, and marginal-ROI thresholds",
+        "meets all thresholds",
     };
   }
 
@@ -111,7 +111,7 @@ export function selectThresholdBudget(
     marginal_ratio: fallback.marginal_ratio,
     is_fallback: true,
     selection_note:
-      "fallback to highest sampled ROI; no tested point met all thresholds",
+      "fallback: no budget met all thresholds",
   };
 }
 

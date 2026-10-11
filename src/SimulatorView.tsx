@@ -168,63 +168,15 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
 
   return (
     <div className="app simulator-view">
-      <section className="panel" aria-labelledby="about-heading">
-        <h2 id="about-heading">Explore the allocation model</h2>
-        <p className="sim-purpose">
-          The point of this simulator is not to predict a new climate future. It
-          is to show how a limited resilience budget moves when the assumed loss,
-          investment response, or location of that loss changes.
-        </p>
-        <div className="sim-guide" aria-label="How to use the simulator">
-          <div className="sim-guide-step">
-            <span className="sim-guide-number" aria-hidden="true">1</span>
-            <div>
-              <h3>Set the case</h3>
-              <p>
-                Choose cumulative modeled loss, an allocation budget, and a
-                Pessimistic, Moderate, or Optimistic response scenario.
-              </p>
-            </div>
-          </div>
-          <div className="sim-guide-step">
-            <span className="sim-guide-number" aria-hidden="true">2</span>
-            <div>
-              <h3>Place the loss</h3>
-              <p>
-                Keep the published distribution or adjust relative loss across
-                seven energy sources and their 18 fixed clusters.
-              </p>
-            </div>
-          </div>
-          <div className="sim-guide-step">
-            <span className="sim-guide-number" aria-hidden="true">3</span>
-            <div>
-              <h3>Run and compare</h3>
-              <p>
-                Review the budget frontier, source and cluster allocations,
-                Texas map, and sensitivity results as each stage appears.
-              </p>
-            </div>
-          </div>
-        </div>
-        <p className="sim-boundary">
-          What stays fixed: the upstream machine-learning forecasts are not
-          rerun, and the 18 clusters and ten geographic centroids do not move.
-          Results remain scenario-dependent. Avoided loss divided by budget is a
-          modeled benefit-cost ratio, not accounting ROI or IRR. The original
-          analysis used AMPL and SNOPT; this browser solves the same separable
-          model with the exact KKT/bisection rule.
-        </p>
-      </section>
-
       <section className="panel" aria-labelledby="controls-heading">
         <h2 id="controls-heading">Controls</h2>
         <p className="blurb">
-          Defaults reconstruct the published $43.1B / Moderate / $5B case.
+          Defaults: $43.1B loss, $5B budget, Moderate scenario. Forecasts and
+          cluster locations are fixed.
         </p>
         <div className="controls">
           <label>
-            Total modeled cumulative loss ($B)
+            Total loss, 2025–2050 ($B)
             <input
               type="number"
               min={0}
@@ -240,7 +192,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
             />
           </label>
           <label>
-            Detailed allocation budget ($B)
+            Budget ($B)
             <input
               type="number"
               min={0}
@@ -256,7 +208,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
             />
           </label>
           <label>
-            Detailed allocation scenario
+            Scenario
             <select
               value={draft.scenario}
               disabled={running}
@@ -274,7 +226,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
           </label>
           <div className="actions">
             <button type="button" onClick={onRun} disabled={running}>
-              Run full analysis
+              Run
             </button>
             <button
               type="button"
@@ -282,7 +234,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
               onClick={onReset}
               disabled={running}
             >
-              Reset published case
+              Reset
             </button>
           </div>
         </div>
@@ -330,9 +282,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </section>
 
       <Stage
-        title="1. Input preparation"
+        title="1. Inputs"
         status={stageStatus.inputs}
-        blurb="Scaled cluster losses preserve published relative shares and reconcile to the selected total."
+        blurb="Cluster losses scaled to the selected total."
       >
         {det && (
           <>
@@ -341,10 +293,6 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
               <Metric label="Sources" value="7" />
               <Metric label="Source-clusters" value="18" />
               <Metric label="Geographic cells" value="10" />
-              <Metric
-                label="Reconciliation"
-                value={det.reconciliation.ok ? "OK" : "DRIFT"}
-              />
             </div>
             <div className="table-wrap">
               <table>
@@ -363,7 +311,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                     <tr key={c.cluster}>
                       <td>{c.cluster}</td>
                       <td>{c.source}</td>
-                      <td>{c.loss_B.toFixed(6)}</td>
+                      <td>{c.loss_B.toFixed(3)}</td>
                       <td>{(c.published_share * 100).toFixed(3)}%</td>
                       <td>{c.latitude}</td>
                       <td>{c.longitude}</td>
@@ -377,9 +325,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="2. Source calibration"
+        title="2. Calibration"
         status={stageStatus.calibration}
-        blurb="Representative loss is the median cluster loss per source. b is recalculated when total loss changes."
+        blurb="L_rep is the median cluster loss per source; b is derived from it."
       >
         {det && (
           <>
@@ -430,8 +378,8 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                       <tr key={`${r.scenario}-${r.source}`}>
                         <td>{r.scenario}</td>
                         <td>{r.source}</td>
-                        <td>{r.a.toFixed(6)}</td>
-                        <td>{r.b_M.toFixed(6)}</td>
+                        <td>{r.a.toFixed(3)}</td>
+                        <td>{r.b_M.toFixed(3)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -443,9 +391,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="3. Scenario frontiers"
+        title="3. Budget frontiers"
         status={stageStatus.frontiers}
-        blurb="Twenty discrete budget caps for each response scenario."
+        blurb="20 budgets per scenario."
       >
         {det && (
           <>
@@ -469,8 +417,8 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                       <tr key={`${r.scenario}-${r.budget_B}`}>
                         <td>{r.scenario}</td>
                         <td>{r.budget_B}</td>
-                        <td>{r.avoided_loss_B.toFixed(6)}</td>
-                        <td>{r.residual_loss_B.toFixed(6)}</td>
+                        <td>{r.avoided_loss_B.toFixed(3)}</td>
+                        <td>{r.residual_loss_B.toFixed(3)}</td>
                         <td>{formatRatio(r.ratio)}</td>
                         <td>
                           {r.marginal_ratio == null
@@ -488,9 +436,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="4. Threshold-selected budgets"
+        title="4. Reference budgets"
         status={stageStatus.thresholds}
-        blurb="Reference points from the tested grid (avoided ≥ $10B, ratio ≥ 1, marginal ratio ≥ 1). The $10B threshold is fixed even when total loss changes."
+        blurb="Largest tested budget with avoided loss ≥ $10B, ratio ≥ 1, and marginal ratio ≥ 1."
       >
         {det && (
           <div className="table-wrap">
@@ -530,9 +478,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="5. Moderate source allocation comparison"
+        title="5. Allocation by source"
         status={stageStatus.sources}
-        blurb="Always solved at Moderate $1B / $5B / $10B for comparison, independent of the detailed budget control."
+        blurb="Moderate scenario at $1B, $5B, and $10B."
       >
         {det && (
           <>
@@ -552,7 +500,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                     <tr key={`${r.cap_bin}-${r.source}`}>
                       <td>{r.cap_bin}</td>
                       <td>{r.source}</td>
-                      <td>{r.allocation_B.toFixed(6)}</td>
+                      <td>{r.allocation_B.toFixed(4)}</td>
                       <td>{formatPct(r.share_pct)}</td>
                     </tr>
                   ))}
@@ -564,16 +512,16 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="6. Detailed custom allocation"
+        title="6. Allocation by cluster"
         status={stageStatus.detailed}
-        blurb="Visitor-selected scenario and budget. Ratio means modeled avoided cumulative loss divided by budget."
+        blurb="Selected scenario and budget."
       >
         {det && (
           <>
             <div className="cards">
               <Metric label="Budget" value={formatBillion(det.detailed.budget_B)} />
               <Metric
-                label="Modeled avoided loss"
+                label="Avoided loss"
                 value={formatBillion(det.detailed.avoided_loss_B)}
               />
               <Metric
@@ -606,8 +554,8 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                       <tr key={a.cluster}>
                         <td>{a.cluster}</td>
                         <td>{a.source}</td>
-                        <td>{a.loss_B.toFixed(6)}</td>
-                        <td>{a.allocation_B.toFixed(6)}</td>
+                        <td>{a.loss_B.toFixed(3)}</td>
+                        <td>{a.allocation_B.toFixed(4)}</td>
                         <td>{formatPct(a.share_pct)}</td>
                         <td>{a.latitude}</td>
                         <td>{a.longitude}</td>
@@ -621,9 +569,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="7. Geographic aggregation"
+        title="7. Map"
         status={stageStatus.geographic}
-        blurb="Eighteen clusters collapse to ten GFDL centroids by exact latitude/longitude."
+        blurb="18 clusters grouped into 10 grid cells."
       >
         {det && (
           <>
@@ -646,8 +594,8 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
                     <tr key={`${c.lat},${c.lon}`}>
                       <td>{c.lat}</td>
                       <td>{c.lon}</td>
-                      <td>{c.baseline_loss_B.toFixed(6)}</td>
-                      <td>{c.allocation_B.toFixed(6)}</td>
+                      <td>{c.baseline_loss_B.toFixed(3)}</td>
+                      <td>{c.allocation_B.toFixed(4)}</td>
                       <td>{formatPct(c.allocation_share_pct)}</td>
                       <td>{c.upstream_risk_rank ?? "—"}</td>
                       <td>{c.clusters.join(", ")}</td>
@@ -661,9 +609,9 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <Stage
-        title="8. Monte Carlo sensitivity"
+        title="8. Sensitivity"
         status={stageStatus.monteCarlo}
-        blurb="300 seeded trials shock a (±10%), b (±20%), and cluster losses (±15%) around the selected scenario. The browser PRNG is deterministic but not NumPy trial-identical."
+        blurb="300 trials varying a (±10%), b (±20%), and cluster loss (±15%)."
       >
         {stageStatus.monteCarlo === "running" && (
           <div className="progress">{mcProgress || "Starting trials…"}</div>
@@ -773,27 +721,21 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
       </Stage>
 
       <section className="panel limitations">
-        <h2>Limitations and definitions</h2>
+        <h2>Notes</h2>
         <ul>
-          {(canonical.known_qualifications as string[]).map((q) => (
-            <li key={q}>{q}</li>
-          ))}
+          <li>Losses are cumulative over 2025–2050, not annual.</li>
           <li>
-            Original research formulated in AMPL and solved with SNOPT. This
-            browser uses the exact KKT allocation rule for the same separable
-            convex model.
+            Response parameters <code>a</code> and <code>b</code> are
+            assumptions, not measured effects.
+          </li>
+          <li>Changing the loss distribution does not rerun the forecasts.</li>
+          <li>
+            Ratio is avoided loss divided by budget. It is not a financial
+            return.
           </li>
           <li>
-            Custom loss distributions reallocate assumed loss among the published
-            18 clusters; they do not regenerate upstream ML forecasts.
-          </li>
-          <li>
-            When cluster losses change, source median representative losses and
-            derived <code>b</code> values are recalculated before scenario scaling.
-          </li>
-          <li>
-            Upstream forecasting context: cumulative loss scenarios are research
-            inputs, not produced inside this simulator.
+            Solved in the browser with a KKT/bisection rule. The original used
+            AMPL and SNOPT.
           </li>
         </ul>
       </section>

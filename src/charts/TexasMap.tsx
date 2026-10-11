@@ -164,8 +164,8 @@ export function TexasMapPanels({ cells }: { cells: GeographicCell[] }) {
             role="img"
             aria-label={
               metric === "loss"
-                ? "Cumulative modeled loss by grid cell over Texas"
-                : "Optimized allocation by grid cell over Texas"
+                ? "Loss by grid cell"
+                : "Allocation by grid cell"
             }
           >
             {paths.map((d, i) => (
@@ -206,10 +206,7 @@ export function TexasMapPanels({ cells }: { cells: GeographicCell[] }) {
         </div>
       )}
       <p className="muted">
-        Local Texas outline from Census county subdivisions (dissolved). Circles
-        mark the ten published centroids; area encodes magnitude and does not
-        represent geographic coverage. Hollow markers denote zero / near-zero
-        values.
+        Circle area shows magnitude. Hollow circles are near zero.
       </p>
     </div>
   );

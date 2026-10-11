@@ -94,15 +94,12 @@ export function DistributionEditor({
       </div>
 
       <p className="muted">
-        Relative loss weights only — not physical-risk scores. Changing cluster
-        losses recomputes each source&apos;s median representative loss and derived{" "}
-        <code>b</code> before scenario scaling (V4 calibration behavior).
+        Weights set each cluster&apos;s share of total loss.
       </p>
 
       {mode === "published" ? (
         <p className="blurb">
-          Using the frozen published relative shares across seven sources and 18
-          clusters. Switch to custom to edit weights.
+          Using the published shares. Switch to custom to edit.
         </p>
       ) : (
         <>

@@ -55,6 +55,8 @@ function preprocessReport(md: string): string {
   return out
     .join("\n")
     .replace(/^<!--[\s\S]*?-->\s*/, "")
+    // Single-dollar math is off (dollar amounts), so promote symbols like $x_i$ to $$x_i$$.
+    .replace(/(?<!\$)\$([A-Za-z](?:_[A-Za-z])?(?:\([a-z]\))?)\$(?!\$)/g, "$$$$$1$$$$")
     .replace(
       /^# From Climate-Risk Forecasts to Resilience Investment Decisions in ERCOT\s*\n+/,
       "",
