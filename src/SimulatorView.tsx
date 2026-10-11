@@ -168,11 +168,38 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
 
   return (
     <div className="app simulator-view">
+      <section className="panel sim-howto" aria-labelledby="howto-heading">
+        <h2 id="howto-heading">How to use</h2>
+        <ol>
+          <li>
+            <strong>Total loss:</strong> projected ERCOT loss over 2025–2050,
+            in $ billions.
+          </li>
+          <li>
+            <strong>Budget:</strong> how much to invest, in $ billions.
+          </li>
+          <li>
+            <strong>Scenario:</strong> how effective investment is
+            (Pessimistic, Moderate, or Optimistic).
+          </li>
+        </ol>
+        <p>
+          Set the three inputs and click Run. The results show where the budget
+          goes and how much loss it avoids. To change which clusters hold the
+          loss, edit the loss distribution.
+        </p>
+        <p className="sim-solver">
+          <strong>Solver:</strong> the original results used SNOPT through
+          AMPL, which requires a paid license and cannot run in a browser. This
+          page solves the same model with a KKT/bisection method and matches
+          the published $5B Moderate case.
+        </p>
+      </section>
+
       <section className="panel" aria-labelledby="controls-heading">
         <h2 id="controls-heading">Controls</h2>
         <p className="blurb">
-          Defaults: $43.1B loss, $5B budget, Moderate scenario. Forecasts and
-          cluster locations are fixed.
+          Defaults: $43.1B loss, $5B budget, Moderate scenario.
         </p>
         <div className="controls">
           <label>
@@ -733,10 +760,7 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
             Ratio is avoided loss divided by budget. It is not a financial
             return.
           </li>
-          <li>
-            Solved in the browser with a KKT/bisection rule. The original used
-            AMPL and SNOPT.
-          </li>
+          <li>Loss forecasts and cluster locations are fixed.</li>
         </ul>
       </section>
     </div>
