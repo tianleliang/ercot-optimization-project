@@ -169,32 +169,51 @@ export default function SimulatorView({ active = true }: { active?: boolean }) {
   return (
     <div className="app simulator-view">
       <section className="panel" aria-labelledby="about-heading">
-        <h2 id="about-heading">About this simulator</h2>
-        <ul className="intro-list">
-          <li>
-            Choose total modeled loss, budget, response scenario
-            (Pessimistic / Moderate / Optimistic), and optionally a custom
-            relative loss distribution across seven sources and 18 clusters.
-          </li>
-          <li>
-            The simulator reallocates assumed loss and{" "}
-            <strong>does not rerun the upstream machine-learning forecasts</strong>.
-          </li>
-          <li>
-            Outputs are scenario-dependent modeled results. Avoided loss divided
-            by budget is a modeled benefit-cost ratio — not accounting ROI or IRR.
-          </li>
-          <li>
-            The 18 clusters and ten geographic centroids are fixed to the
-            published project structure. The published analysis was formulated in
-            AMPL and solved with SNOPT; this browser uses the exact KKT/bisection
-            solution for the same separable model.
-          </li>
-        </ul>
-        <p className="blurb" style={{ marginBottom: 0 }}>
-          <strong>How to use:</strong> (1) set total loss, budget, and scenario;
-          (2) optionally switch to a custom loss distribution; (3) run full
-          analysis and review the progressively rendered stages below.
+        <h2 id="about-heading">Explore the allocation model</h2>
+        <p className="sim-purpose">
+          The point of this simulator is not to predict a new climate future. It
+          is to show how a limited resilience budget moves when the assumed loss,
+          investment response, or location of that loss changes.
+        </p>
+        <div className="sim-guide" aria-label="How to use the simulator">
+          <div className="sim-guide-step">
+            <span className="sim-guide-number" aria-hidden="true">1</span>
+            <div>
+              <h3>Set the case</h3>
+              <p>
+                Choose cumulative modeled loss, an allocation budget, and a
+                Pessimistic, Moderate, or Optimistic response scenario.
+              </p>
+            </div>
+          </div>
+          <div className="sim-guide-step">
+            <span className="sim-guide-number" aria-hidden="true">2</span>
+            <div>
+              <h3>Place the loss</h3>
+              <p>
+                Keep the published distribution or adjust relative loss across
+                seven energy sources and their 18 fixed clusters.
+              </p>
+            </div>
+          </div>
+          <div className="sim-guide-step">
+            <span className="sim-guide-number" aria-hidden="true">3</span>
+            <div>
+              <h3>Run and compare</h3>
+              <p>
+                Review the budget frontier, source and cluster allocations,
+                Texas map, and sensitivity results as each stage appears.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="sim-boundary">
+          What stays fixed: the upstream machine-learning forecasts are not
+          rerun, and the 18 clusters and ten geographic centroids do not move.
+          Results remain scenario-dependent. Avoided loss divided by budget is a
+          modeled benefit-cost ratio, not accounting ROI or IRR. The original
+          analysis used AMPL and SNOPT; this browser solves the same separable
+          model with the exact KKT/bisection rule.
         </p>
       </section>
 
