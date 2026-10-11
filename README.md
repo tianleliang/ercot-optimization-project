@@ -1,4 +1,4 @@
-# ERCOT Optimization Project 
+# ERCOT Optimization Project (Mentored by Prof. Michael Saunders, Stanford Systems Optimization Laboratory) 
 
 If $43.1B in climate-driven losses is forecast for the Texas grid by 2050, how should a limited resilience budget be allocated across 7 energy sources and 18 plant clusters?
 
